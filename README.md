@@ -1,64 +1,65 @@
 # First Draft
 
-### Schema
-- Society Collection
-```json
+## Schema
+- ## Society Collection
+```bash
 {
-  "_id": ObjectId,             // Unique identifier for the society
-  "name": String,              // Name of the society
-  "description": String,       // Brief about the society
-  "facultyAdvisor": {          // Faculty advisor details
+  "_id": ObjectId,    
+  "name": String,     
+  "description": String,
+  "facultyAdvisor": 
+  {   
     "name": String,
     "email": String,
     "phone": String
   },
-  "council": [                 // List of council members
+  "council": [          
     {
       "name": String,
       "position": String,
       "email": String
     }
   ],
-  "members": [                 // List of members
+  "members": [          
     {
       "name": String,
       "role": String,
       "email": String
     }
   ],
-  "achievements": [            // Array of achievements
+  "achievements": [     
     {
       "title": String,
       "description": String,
       "date": Date
     }
   ],
-  "pastEvents": [              // List of past events
+  "pastEvents": [       
     {
-      "eventId": ObjectId,     // Reference to an Event
+      "eventId": ObjectId,     
       "title": String,
       "date": Date
     }
   ],
-  "images": [String],          // URLs of society-related images
-  "announcements": [           // List of announcements
+  "images": [String],          
+  "announcements": [           
     {
       "title": String,
       "content": String,
       "date": Date
     }
   ],
-  "recruitments": [            // List of current recruitments
+  "recruitments": [            
     {
-      "recruitmentId": ObjectId, // Reference to a Recruitment
+      "recruitmentId": ObjectId, 
       "title": String,
       "deadline": Date
     }
   ]
 }
 ```
-- Event Collection
-```json
+- ## Event Collection
+```bash
 {
   "_id": ObjectId,             // Unique identifier for the event
   "societyId": ObjectId,       // Reference to the Society collection
@@ -71,71 +72,79 @@
   "images": [String]           // URLs of event-related images
 }
 ```
-- User Schema
-```json
+- ## User Schema
+```bash
 {
-  "_id": ObjectId,               // Unique identifier for the user
-  "name": String,                // Full name of the user
-  "email": String,               // Email address (unique, for login/communication)
-  "password": String,            // Encrypted password for authentication
-  "role": {                      // Role of the user (e.g., student, society admin)
+  "_id": ObjectId,              
+  "name": String,               
+  "email": String,              
+  "password": String,           
+  "role": 
+  {                     
     "type": String,              
-    "enum": ["student", "societyAdmin"],
+    "enum": [
+        "student", "societyAdmin" 
+        ],
     "default": "student"
   },
-  "profile": {                   // Additional user details
-    "contact": String,           // Contact number
-    "department": String,        // Department or field of study
-    "year": String,              // Year of study (e.g., First Year, Final Year)
-    "resumeUrl": String,         // URL to the user's resume
-    "linkedinUrl": String,       // LinkedIn profile URL (optional)
-    "portfolioUrl": String       // Personal portfolio or project website (optional)
+  "profile": 
+  {                   
+    "contact": String,           
+    "department": String,        
+    "year": String,              
+    "resumeUrl": String,         
+    "linkedinUrl": String,       
+    "portfolioUrl": String       
   },
-  "recruitmentApplications": [   // List of recruitments the user has applied to
+  "recruitmentApplications": [   
     {
       "recruitmentId": ObjectId, // Reference to the Recruitment collection
       "societyId": ObjectId,     // Reference to the Society collection
       "appliedAt": Date,         // Timestamp of the application
-      "status": {                // Status of the application
+      "status": 
+      {    
         "type": String,
-        "enum": ["Pending", "Approved", "Rejected"],
+        "enum": [
+            "Pending", "Approved", "Rejected"
+            ],
         "default": "Pending"
       },
-      "coverLetter": String      // Cover letter submitted during application
+      "coverLetter": String    
     }
   ],
-  "createdAt": Date,             // Account creation timestamp
-  "updatedAt": Date              // Last updated timestamp
+  "createdAt": Date,           
+  "updatedAt": Date            
 }
 ```
-- Recruitment Schema
-```json
+
+- ## Recruitment Schema
+```bash
 {
-  "_id": ObjectId,             // Unique identifier for the recruitment
-  "societyId": ObjectId,       // Reference to the Society collection
-  "title": String,             // Title of the recruitment opening (e.g., "Web Developer Intern")
-  "description": String,       // Detailed description of the recruitment role or project
-  "eligibility": String,       // Eligibility criteria for applicants (e.g., "Final Year Students")
-  "deadline": Date,            // Deadline for submitting applications
-  "tags": [String],            // Tags for easier filtering (e.g., ["Technical", "Internship"])
-  "applications": [            // List of applications for this recruitment
+  "_id": ObjectId,             
+  "societyId": ObjectId,       
+  "title": String,             
+  "description": String,       
+  "eligibility": String,       
+  "deadline": Date,            
+  "tags": [String],            
+  "applications": 
+  [            
     {
-      "userId": ObjectId,      // Reference to the User collection (applicant)
-      "coverLetter": String,   // Cover letter submitted by the applicant
-      "resumeUrl": String,     // URL to the applicant's resume
-      "status": {              // Status of the application
+      "userId": ObjectId,      
+      "coverLetter": String,   
+      "resumeUrl": String,     
+      "status": {            
         "type": String,
         "enum": ["Pending", "Approved", "Rejected"],
         "default": "Pending"
       },
-      "appliedAt": Date        // Date and time when the application was submitted
+      "appliedAt": Date      
     }
   ],
-  "createdBy": ObjectId,       // Reference to the User collection (Society Admin who created the recruitment)
-  "createdAt": Date,           // Timestamp when the recruitment was created
-  "updatedAt": Date            // Timestamp when the recruitment was last updated
+  "createdBy": ObjectId, 
+  "createdAt": Date,     
+  "updatedAt": Date      
 }
-
 ```
 
 
