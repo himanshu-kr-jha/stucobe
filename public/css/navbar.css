@@ -10,8 +10,26 @@
 
 /* Add padding to the body to prevent content from being hidden under the navbar */
 body {
-    padding-top: 70px; /* Adjust this value based on the navbar's height */
+    padding-top: 60px; /* Adjust this value based on the navbar's height */
 }
+/* Style the form button inside navbar */
+.nav-form-button {
+    background: none; /* No background color */
+    border: none; /* Remove border */
+    color: inherit; /* Inherit the text color from the parent (navbar-link) */
+    font-size: 1rem; /* Same size as the links */
+    padding: 0.5rem 1rem; /* Padding for a comfortable click area */
+    cursor: pointer; /* Show a pointer cursor on hover */
+    transition: background-color 0.3s ease, color 0.3s ease; /* Smooth transition on hover */
+    text-align: left; /* Align text to the left */
+}
+
+/* Hover effect for the logout button */
+.navbar form button:hover {
+    background-color: #ffdd00; /* Background color on hover */
+    color: #004aad; /* Change text color on hover */
+}
+
 
 /* Brand Styling */
 .navbar-brand {

@@ -67,7 +67,8 @@ app.use((req, res, next) => {
   next();
 });
 app.use((req,res,next)=>{
-  res.locals.currUser=req.user;
+  res.locals.currUser=req.session.user;
+  console.log(res.locals.currUser)
   next();
 });
 
@@ -121,7 +122,8 @@ app.post("/login",async (req, res) => {
 
     console.log(req.session);
 
-    res.status(200).json({ message: "Login successful" });
+    // res.status(200).json({ message: "Login successful" });
+    res.redirect("/");
   } catch (err) {
     res.status(400).json({ error: err.message });
   }

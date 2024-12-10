@@ -1,16 +1,11 @@
 /* Footer Styles */
 footer {
-    position: fixed; /* Fixes the footer at the bottom of the page */
-    bottom: 0; /* Ensures it's at the very bottom */
-    left: 0;
-    width: 100%; /* Stretches the footer across the full page width */
     background-color: #2c3e50;
     color: white;
     padding: 20px 0;
     font-family: Arial, sans-serif;
     text-align: center; /* Center text inside the footer */
     box-shadow: 0 -4px 6px rgba(0, 0, 0, 0.1); /* Adds a subtle shadow above the footer */
-    z-index: 1000; /* Ensures it stays on top */
 }
 
 footer .container {
@@ -50,7 +45,18 @@ footer p:last-child {
     font-size: 1.2em;
 }
 
-/* Add bottom padding to body to avoid overlap */
+/* Ensure the footer is at the bottom if content is short, without fixing it */
+html, body {
+    height: 100%;
+    margin: 0;
+}
+
 body {
-    padding-bottom: 70px; /* Adjust the padding to match the footer height */
+    display: flex;
+    flex-direction: column;
+    /* padding-bottom: 20px; Provides space for footer */
+}
+
+main {
+    flex: 1; /* Ensures main content takes up available space */
 }
