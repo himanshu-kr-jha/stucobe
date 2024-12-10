@@ -1,6 +1,13 @@
-# First Draft
+# Second draft schema:
 
-## Schema
+- For new schema visit: [models](./models/)
+- For api, visit: [api](./app.js)
+- For middleware,  visit [middleware](./middleware.js)
+
+
+
+# First Draft
+### Schema
 - ## Society Collection
 ```bash
 {
@@ -146,5 +153,7 @@
   "updatedAt": Date      
 }
 ```
+
+
 
 

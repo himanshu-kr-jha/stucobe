@@ -1,0 +1,76 @@
+/* General Reset */
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Roboto', Arial, sans-serif;
+    background-color: #f8f9fa; /* Light background for modern look */
+    color: #333;
+    line-height: 1.6;
+}
+
+/* Hero Section */
+.hero-section {
+    background: linear-gradient(to bottom right, #004aad, #00b4d8); /* Vibrant gradient background */
+    color: white;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 20px;
+}
+
+.hero-content h1 {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+}
+
+.hero-content .highlight {
+    color: #ffdd00; /* Bright highlight for 'Destinate !t' */
+    font-weight: bold;
+}
+
+.hero-content p {
+    font-size: 1.2rem;
+    margin-bottom: 1rem;
+}
+
+.hero-content .explore-btn {
+    padding: 0.75rem 1.5rem;
+    font-size: 1.1rem;
+    background-color: #ffdd00; /* Bold and engaging button color */
+    color: black;
+    border: none;
+    border-radius: 5px;
+    text-decoration: none;
+    transition: background-color 0.3s ease;
+}
+
+.hero-content .explore-btn:hover {
+    background-color: #ff6b6b; /* Lighter shade on hover */
+    text-decoration: none;
+}
+
+/* Container Styling */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 15px;
+}
+
+/* Footer */
+footer {
+    background-color: #004aad;
+    color: white;
+    padding: 15px 0;
+    text-align: center;
+}
+
+footer a {
+    color: #ffdd00;
+    text-decoration: none;
+}
+
+footer a:hover {
+    text-decoration: underline;
+}

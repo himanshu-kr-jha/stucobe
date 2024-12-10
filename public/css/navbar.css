@@ -1,0 +1,74 @@
+/* General Navbar Styling */
+.navbar {
+    position: fixed; /* Sticks the navbar to the top */
+    top: 0; /* Ensures it stays at the top of the viewport */
+    width: 100%; /* Full width to span the viewport */
+    z-index: 1030; /* Ensures it stays above other content */
+    background: linear-gradient(to right, #004aad, #0074e4); /* Blue gradient */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+}
+
+/* Add padding to the body to prevent content from being hidden under the navbar */
+body {
+    padding-top: 70px; /* Adjust this value based on the navbar's height */
+}
+
+/* Brand Styling */
+.navbar-brand {
+    color: #ffffff; /* White brand name for contrast */
+    font-weight: bold;
+    font-size: 1.5rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.navbar-brand:hover {
+    color: #ffdd00; /* Highlighted yellow on hover */
+    text-decoration: none;
+}
+
+/* Navbar Links */
+.nav-link {
+    color: #ffffff; /* White links for visibility */
+    font-size: 1rem;
+    padding: 0.5rem 1rem;
+    transition: color 0.3s ease, background-color 0.3s ease;
+    border-radius: 5px; /* Rounded hover background */
+}
+
+.nav-link.active,
+.nav-link:hover {
+    color: #004aad; /* Contrast with gradient */
+    background-color: #ffdd00; /* Yellow hover effect */
+}
+
+/* Navbar Toggler */
+.navbar-toggler {
+    border: none;
+    outline: none;
+}
+
+.navbar-toggler-icon {
+    background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3E%3Cpath stroke='rgba(255,255,255,0.8)' stroke-width='2' stroke-linecap='round' stroke-miterlimit='10' d='M4 7h22M4 15h22M4 23h22'/%3E%3C/svg%3E");
+}
+
+/* Navbar Container */
+.navbar .container {
+    max-width: 1200px;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .navbar-nav {
+        text-align: center;
+    }
+
+    .nav-link {
+        margin-bottom: 0.5rem; /* Add spacing between links */
+    }
+}
+
+/* Gradient Background Hover */
+.nav-link:hover {
+    background: linear-gradient(to right, #ffdd00, #ffe680); /* Yellow gradient hover effect */
+}

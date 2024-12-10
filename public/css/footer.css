@@ -1,0 +1,56 @@
+/* Footer Styles */
+footer {
+    position: fixed; /* Fixes the footer at the bottom of the page */
+    bottom: 0; /* Ensures it's at the very bottom */
+    left: 0;
+    width: 100%; /* Stretches the footer across the full page width */
+    background-color: #2c3e50;
+    color: white;
+    padding: 20px 0;
+    font-family: Arial, sans-serif;
+    text-align: center; /* Center text inside the footer */
+    box-shadow: 0 -4px 6px rgba(0, 0, 0, 0.1); /* Adds a subtle shadow above the footer */
+    z-index: 1000; /* Ensures it stays on top */
+}
+
+footer .container {
+    width: 80%; /* Adjusts the container width inside the footer */
+    margin: 0 auto; /* Centers the container */
+}
+
+footer p {
+    margin: 10px 0;
+}
+
+footer a {
+    color: #ecf0f1;
+    text-decoration: none;
+    margin: 0 10px;
+    font-size: 1.2em;
+}
+
+footer a:hover {
+    color: #3498db; /* Hover effect for links */
+}
+
+footer .fab {
+    font-size: 1.5em;
+    transition: color 0.3s ease;
+}
+
+footer .fab:hover {
+    color: #3498db; /* Hover effect for icons */
+}
+
+footer p:first-child {
+    font-size: 1.1em;
+}
+
+footer p:last-child {
+    font-size: 1.2em;
+}
+
+/* Add bottom padding to body to avoid overlap */
+body {
+    padding-bottom: 70px; /* Adjust the padding to match the footer height */
+}
