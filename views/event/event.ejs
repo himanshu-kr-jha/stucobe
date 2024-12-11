@@ -1,0 +1,165 @@
+<% layout("layouts/boilerplate") %>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f4f4f4;
+        margin: 0;
+        padding-top: 4.5rem;
+    }
+
+    h1 {
+        text-align: center;
+        padding: 20px;
+        background-color: #333;
+        color: white;
+        font-size: 2rem;
+        letter-spacing: 1px;
+        animation: fadeIn 2s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+        0% { opacity: 0; }
+        100% { opacity: 1; }
+    }
+
+    #events-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 20px;
+        padding: 20px;
+    }
+
+    .item {
+        background-color: white;
+        border-radius: 8px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        padding: 20px;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .item:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+    }
+
+    .item-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 15px;
+    }
+
+    .item-header h2 {
+        margin: 0;
+        font-size: 1.3rem;
+        letter-spacing: 0.5px;
+        transition: color 0.3s ease;
+    }
+
+    .item-header h2:hover {
+        color: #007BFF;
+    }
+
+    .item-date {
+        font-size: 0.9em;
+        color: gray;
+    }
+
+    .event, .announcement, .recruitment {
+        margin-top: 10px;
+    }
+
+    .event p, .announcement p, .recruitment p {
+        margin: 0;
+    }
+
+    /* Colorful tags */
+    .event-tag {
+        background-color: #f39c12;
+        color: white;
+        padding: 5px 10px;
+        border-radius: 5px;
+        font-size: 0.9rem;
+        font-weight: bold;
+        display: inline-block;
+        margin-bottom: 10px;
+    }
+
+    .announcement-tag {
+        background-color: #e74c3c;
+        color: white;
+        padding: 5px 10px;
+        border-radius: 5px;
+        font-size: 0.9rem;
+        font-weight: bold;
+        display: inline-block;
+        margin-bottom: 10px;
+    }
+
+    .recruitment-tag {
+        background-color: #2ecc71;
+        color: white;
+        padding: 5px 10px;
+        border-radius: 5px;
+        font-size: 0.9rem;
+        font-weight: bold;
+        display: inline-block;
+        margin-bottom: 10px;
+    }
+    
+    /* Additional hover effects for the tags */
+    .event-tag:hover {
+        background-color: #f1c40f;
+    }
+
+    .announcement-tag:hover {
+        background-color: #c0392b;
+    }
+
+    .recruitment-tag:hover {
+        background-color: #27ae60;
+    }
+
+</style>
+
+<body>
+
+  <h1>Society Events, Announcements, and Recruitments</h1>
+
+  <div id="events-container">
+    <% allData.forEach(item => { %>
+      <div class="item">
+        <div class="item-header">
+          <div>
+            <h2><%= item.title %></h2>
+            <p class="item-date"><%= item.date?.toLocaleDateString() || " " %></p>
+          </div>
+
+          <!-- Displaying the colorful tag based on the item type -->
+          <% if (item.tag === 'event') { %>
+            <span class="event-tag">Event</span>
+          <% } else if (item.tag === 'announcement') { %>
+            <span class="announcement-tag">Announcement</span>
+          <% } else if (item.tag === 'recruitment') { %>
+            <span class="recruitment-tag">Recruitment</span>
+          <% } %>
+        </div>
+        <img src="<%=item.logo%>" alt="logo img">
+        <% if (item.tag === 'event') { %>
+          <div class="event">
+            <p><%= item.description %></p>
+          </div>
+        <% } else if (item.tag === 'announcement') { %>
+          <div class="announcement">
+            <p><%= item.content %></p>
+          </div>
+        <% } else if (item.tag === 'recruitment') { %>
+          <div class="recruitment">
+            <p>Deadline: <%= item.deadline.toLocaleDateString() %></p>
+          </div>
+        <% } %>
+      </div>
+    <% }) %>
+  </div>
+
+</body>
