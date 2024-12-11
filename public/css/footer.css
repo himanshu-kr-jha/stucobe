@@ -27,7 +27,7 @@ footer {
     bottom: 0;
 }
 
-footer .container {
+footer .footer-container {
     width: 80%; /* Adjusts the container width inside the footer */
     margin: 0 auto; /* Centers the container */
 }
@@ -77,7 +77,7 @@ footer {
     bottom: 0px;
 }
 
-footer .container {
+footer .footer-container {
     width: 80%; /* Adjusts the container width inside the footer */
     margin: 0 auto; /* Centers the container */
 }

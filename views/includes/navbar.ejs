@@ -1,6 +1,100 @@
-<link rel="stylesheet" href="css/navbar.css">
+<style>
+    /* General Navbar Styling */
+.navbar {
+    position: fixed; /* Sticks the navbar to the top */
+    top: 0; /* Ensures it stays at the top of the viewport */
+    width: 100%; /* Full width to span the viewport */
+    z-index: 1030; /* Ensures it stays above other content */
+    background: linear-gradient(to right, #004aad, #0074e4); /* Blue gradient */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+}
+
+/* Add padding to the body to prevent content from being hidden under the navbar */
+body {
+    padding-top: 4rem; /* Adjust this value based on the navbar's height */
+}
+/* Style the form button inside navbar */
+.nav-form-button {
+    background: none; /* No background color */
+    border: none; /* Remove border */
+    color: inherit; /* Inherit the text color from the parent (navbar-link) */
+    font-size: 1rem; /* Same size as the links */
+    padding: 0.5rem 1rem; /* Padding for a comfortable click area */
+    cursor: pointer; /* Show a pointer cursor on hover */
+    transition: background-color 0.3s ease, color 0.3s ease; /* Smooth transition on hover */
+    text-align: left; /* Align text to the left */
+}
+
+/* Hover effect for the logout button */
+.navbar form button:hover {
+    background-color: #ffdd00; /* Background color on hover */
+    color: #004aad; /* Change text color on hover */
+}
+
+
+/* Brand Styling */
+.navbar-brand {
+    color: #ffffff; /* White brand name for contrast */
+    font-weight: bold;
+    font-size: 1.5rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.navbar-brand:hover {
+    color: #ffdd00; /* Highlighted yellow on hover */
+    text-decoration: none;
+}
+
+/* Navbar Links */
+.nav-link {
+    color: #ffffff; /* White links for visibility */
+    font-size: 1rem;
+    padding: 0.5rem 1rem;
+    transition: color 0.3s ease, background-color 0.3s ease;
+    border-radius: 5px; /* Rounded hover background */
+}
+
+.nav-link.active,
+.nav-link:hover {
+    color: #004aad; /* Contrast with gradient */
+    background-color: #ffdd00; /* Yellow hover effect */
+}
+
+/* Navbar Toggler */
+.navbar-toggler {
+    border: none;
+    outline: none;
+}
+
+.navbar-toggler-icon {
+    background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3E%3Cpath stroke='rgba(255,255,255,0.8)' stroke-width='2' stroke-linecap='round' stroke-miterlimit='10' d='M4 7h22M4 15h22M4 23h22'/%3E%3C/svg%3E");
+}
+
+/* Navbar nav-nav-container */
+.navbar .nav-container {
+    max-width: 1200px;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .navbar-nav {
+        text-align: center;
+    }
+
+    .nav-link {
+        margin-bottom: 0.5rem; /* Add spacing between links */
+    }
+}
+
+/* Gradient Background Hover */
+.nav-link:hover {
+    background: linear-gradient(to right, #ffdd00, #ffe680); /* Yellow gradient hover effect */
+}
+
+</style>
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
-    <div class="container">
+    <div class="container nav-container">
         <a class="navbar-brand" href="/">StuCobE</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
@@ -21,6 +115,32 @@
                         <a class="nav-link" href="/login">Login</a>
                     </li>
                 <%}else{%>
+                    <%if(mainAdmin){%>
+                        <li class="nav-item dropdown">
+                            <p class="nav-link dropdown-toggle" href="/user" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                All Society
+                            </p>
+                            <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                <li><a class="dropdown-item" href="/create-society">Create Society</a></li>
+                                <!-- <li><a class="dropdown-item" href="/society/">Update</a></li> -->
+                            </ul>
+                        </li>
+                    <%}else{%>
+                        <p></p>
+                    <%}%>    
+                    <%if(Sadmin){%>
+                        <li class="nav-item dropdown">
+                            <p class="nav-link dropdown-toggle" href="/user" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Society
+                            </p>
+                            <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                <li><a class="dropdown-item" href="/society/profile">About</a></li>
+                                <li><a class="dropdown-item" href="/society/update">Update</a></li>
+                            </ul>
+                        </li>
+                    <%}else{%>
+                        <p></p>
+                    <%}%>    
                     <li class="nav-item dropdown">
                         <p class="nav-link dropdown-toggle" href="/user" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                             Profile
@@ -37,19 +157,6 @@
                             </li>
                         </ul>
                     </li>
-                    <%if(Sadmin && Sadmin!=null){%>
-                        <li class="nav-item dropdown">
-                            <p class="nav-link dropdown-toggle" href="/user" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                Society
-                            </p>
-                            <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                <li><a class="dropdown-item" href="/society/profile">About</a></li>
-                                <li><a class="dropdown-item" href="/society/update">Update</a></li>
-                            </ul>
-                        </li>
-                    <%}else{%>
-                        <p></p>
-                    <%}%>    
                 <%}%>
 
                 

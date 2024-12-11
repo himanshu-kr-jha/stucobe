@@ -1,0 +1,166 @@
+<style>    
+    /* Hero Section */
+/* Hero Section */
+.hero {
+    background: #f8f9fa; /* Light grey background for a classic feel */
+    color: #212529; /* Dark text for contrast */
+    text-align: center;
+    padding: 3rem 1rem;
+    border-bottom: 1px solid #e9ecef; /* Subtle border for section distinction */
+}
+
+.hero h1 {
+    font-size: 2.5rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+
+.hero a {
+    background-color: #007bff; /* Primary blue */
+    color: #fff;
+    padding: 0.5rem 1.5rem;
+    text-decoration: none;
+    font-size: 1rem;
+    border-radius: 0.25rem;
+    transition: background-color 0.3s;
+}
+
+.hero a:hover {
+    background-color: #0056b3; /* Darker blue */
+}
+
+/* Card Section */
+.container-home {
+    display: flex;
+    justify-content: center;
+    gap: 1.5rem;
+    margin: 2rem auto;
+    flex-wrap: wrap;
+    padding: 0 1rem;
+}
+
+.card-list {
+    background-color: #fff;
+    border: 1px solid #dee2e6; /* Subtle border */
+    border-radius: 1rem; /* Rounded corners for a modern look */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    text-align: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    width: 20rem;
+    position: relative;
+    height: 450px;
+}
+
+.card-list:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+.card-img-top-list {
+    width: 100%;
+    height: 270px;
+    object-fit: cover;
+    border-bottom: 1px solid #dee2e6; /* Separating the image */
+}
+
+.card-body-list {
+    padding: 0.1rem;
+}
+
+.card-text-list {
+    font-size: 1rem;
+    color: #495057; /* Subtle grey text */
+    margin-bottom: 0.5rem;
+    line-height: 1.5;
+}
+
+.text-muted {
+    color: #6c757d; /* Classic muted text color */
+    font-size: 0.9rem;
+}
+
+button {
+    background-color: #28a745; /* Success green */
+    color: #fff;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    margin:1rem;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background-color 0.3s, transform 0.2s;
+}
+
+button:hover {
+    background-color: #218838; /* Darker green */
+    transform: scale(1.05);
+}
+
+form {
+    margin-top: 1rem;
+}
+
+/* Link Styling */
+a {
+    text-decoration: none;
+    color: inherit;
+    transition: color 0.3s;
+}
+
+a:hover {
+    color: #0056b3;
+}
+
+/* Additional Card Styling */
+.card-list::after {
+    content: '';
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 5px;
+    width: 100%;
+    background: linear-gradient(90deg, #007bff, #28a745);
+}
+
+</style>
+<% layout("layouts/boilerplate") %>
+<body class="vsc-initialised">
+    <!-- Hero Section -->
+    <div class="hero">
+        <h1>Trending societies</h1>
+    </div>
+
+    <!-- Content Section -->
+    <div class="container container-home">
+        <% societies.forEach(function(society) { %>
+            <a href=<%=`/society/${society._id}`%> >
+                <div class="card-list" style="width:20rem">
+                
+                    <img src="<%=society.logo%>" alt="Card View" class="card-img-top-list">
+                    <div class="card-img-overlay-list">
+                    </div>
+                <div class="card-body-list">
+                        <p class="card-text-list">
+                            <b><%= society.name %></b>
+                            <br>
+                            <span class="text-muted"><%= society.description.slice(0,10) %>...</span>
+                            <%if(society.followers!=undefined){%>
+                                <p>Followers:<%= society.followers.length%></p>
+                            <%}%>
+                        </p>
+                </div>
+                <%if(!society.followers.includes(currUser._id)){%>
+                    <form action=<%=`/user/${society._id}/follow`%> method=post>
+                        <button>Follow</button>
+                    </form>
+                <%}else{%>
+                    <p>You are following.</p>
+                <%}%>
+                
+        </div>
+        </a>
+        <% }); %>
+    </div>
+</body>

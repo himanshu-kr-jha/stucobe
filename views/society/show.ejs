@@ -1,0 +1,346 @@
+<% layout("layouts/boilerplate") %>
+
+<style>
+    /* General Styles */
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f8f9fa;
+        color: #343a40;
+        margin: 0;
+        padding-top: 1rem;
+    }
+
+    /* Hero Section */
+    .hero {
+    position: relative;
+    background-color: #f4f4f4;
+    padding: 50px;
+    text-align: center;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+.floating-hero {
+    position: relative;
+    z-index: 2;
+}
+
+.hero h1 {
+    font-size: 3em;
+    font-weight: bold;
+    color: #333;
+    margin: 10px 0;
+}
+
+.hero p {
+    font-size: 1.2em;
+    color: #555;
+    margin: 20px 0;
+}
+
+.edit-button {
+    background-color: #3498db;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    font-size: 1em;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.edit-button:hover {
+    background-color: #2980b9;
+}
+
+
+    /* Floating Card Style */
+    .floating-card {
+        position: relative;
+        background-color: #ffffff;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .floating-card h3 {
+        font-size: 1.8rem;
+        margin-bottom: 1rem;
+        color: #343a40;
+    }
+
+    .floating-card p {
+        font-size: 1.1rem;
+        color: #6c757d;
+    }
+
+    /* Edit Button */
+    .edit-button {
+        position: absolute;
+        bottom: 1rem;
+        right: 1rem;
+        background-color: #ffc107;
+        color: #343a40;
+        border: none;
+        padding: 0.5rem 1rem;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+
+    .edit-button:hover {
+        background-color: #e0a800;
+    }
+
+    /* Modal Styles */
+    .modal {
+        display: none;
+        position: fixed;
+        z-index: 100;
+        left: 0;
+        top: 0;
+        width: 100%;.hero img {
+    position: absolute;
+    /* top: 0%; */
+    left: 0%;
+    /* transform: translate(0%, 0%); */
+    max-width: 100px;
+    border-radius: 50%;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+}
+        height: 100%;
+        overflow: auto;
+        background-color: rgba(0, 0, 0, 0.4);
+        padding-top: 60px;
+    }
+
+    .modal-content {
+        background-color: #fefefe;
+        margin: 5% auto;
+        padding: 20px;
+        border: 1px solid #888;
+        width: 80%;
+        border-radius: 8px;
+    }
+
+    .close {
+        color: #aaa;
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
+    }
+
+    .close:hover,
+    .close:focus {
+        color: black;
+        text-decoration: none;
+        cursor: pointer;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+        .hero h1 {
+            font-size: 2.5rem;
+        }
+
+        .hero p {
+            font-size: 1rem;
+        }
+
+        .floating-card {
+            padding: 1rem;
+        }
+    }
+ 
+
+
+</style>
+
+<body>
+    <div class="container society-container mt-5">
+        <!-- Society Header -->
+        <div class="hero">
+    <div class="floating-hero">
+        <img src="<%= society.logo %>" alt="<%= society.name %> Logo">
+        <h1><%= society.name %></h1>
+        <p><%= society.description %></p>
+        <% if (Sadmin.society == society._id) { %>
+            <button class="edit-button" onclick="openModal('modalSocietyHeader')">Edit</button>
+        <% } %>
+    </div>
+</div>
+
+
+        <!-- Faculty Advisor -->
+        <div class="floating-card">
+            <h3>Faculty Advisor</h3>
+            <p><strong>Name:</strong> <%= society.facultyAdvisor.name %></p>
+            <p><strong>Email:</strong> <%= society.facultyAdvisor.email %></p>
+            <p><strong>Phone no</strong> <%= society.facultyAdvisor.phone%></p>
+            <% if (Sadmin.society == society._id) { %>
+                <button class="edit-button" onclick="openModal('modalFacultyAdvisor')">Edit</button>
+            <% } %>
+        </div>
+
+
+        <!-- Society Admins -->
+        <div class="floating-card">
+            <h3>Society Admins</h3>
+            <% society.societyAdmin.forEach(function(user){ %>
+                <p><strong>Name</strong> <%= user.name %></p>
+                <p><strong>Department</strong> <%= user.profile?.department || ''%></p>
+                <p><strong>Year</strong> <%= user.profile?.year || '' %></p>
+                <p><strong>Email</strong> <%= user.profile?.email || ''%></p>
+            <% }); %>
+            <% if (Sadmin.society == society._id) { %>
+                <button class="edit-button" onclick="openModal('modalSocietyAdmins')">Edit</button>
+            <% } %>
+        </div>
+
+        <!-- Achievements -->
+        <div class="floating-card">
+            <h3>Achievements</h3>
+            <% society.achievements.forEach(function (achievement) { %>
+                <div>
+                    <h4><%= achievement.title %></h4>
+                    <p><strong>Description:</strong> <%= achievement.description %></p>
+                    <p><strong>Date:</strong> <%= new Date(achievement.date).toLocaleDateString() %></p>
+                </div>
+            <% }); %>
+            <% if (Sadmin.society == society._id) { %>
+                <button class="edit-button" onclick="openModal('modalAchievements')">Edit</button>
+            <% } %>
+        </div>
+
+        <!-- Announcements -->
+        <div class="floating-card">
+            <h3>Announcements</h3>
+            <% society.announcements.forEach(function (announcement) { %>
+                <div>
+                    <h4><%= announcement.title %></h4>
+                    <p><strong>Content:</strong> <%= announcement.content %></p>
+                    <p><strong>Date:</strong> <%= new Date(announcement.date).toLocaleDateString() %></p>
+                </div>
+            <% }); %>
+            <% if (Sadmin.society == society._id) { %>
+                <button class="edit-button" onclick="openModal('modalAnnouncements')">Edit</button>
+            <% } %>
+        </div>
+
+        <!-- Recruitments -->
+        <div class="floating-card">
+            <h3>Recruitments</h3>
+            <% society.recruitments.forEach(function (recruitment) { %>
+                <div>
+                    <h4><%= recruitment.title %></h4>
+                    <p><strong>Deadline:</strong> <%= new Date(recruitment.deadline).toLocaleDateString() %></p>
+                </div>
+            <% }); %>
+            <% if (Sadmin.society == society._id) { %>
+                <button class="edit-button" onclick="openModal('modalRecruitments')">Edit</button>
+            <% } %>
+        </div>
+    </div>
+
+    <!-- Modals -->
+    <div id="modalSocietyHeader" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('modalSocietyHeader')">&times;</span>
+            <h2>Edit Society Header</h2>
+            <form action=<%=`/society/${society._id}/basic-info`%> method=post>
+                <label for="societyName">Name:</label>
+                <input type="text" id="societyName" name="name" value="<%= society.name %>" required>
+                <label for="societyDescription">Description:</label>
+                <textarea id="societyDescription" name="description" required><%= society.description %></textarea>
+                <label for="societyName">Logo</label>
+                <input type="text" id="societyName" name="logourl" value="<%= society.logo %>" required>
+                <button type="submit">Save</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="modalFacultyAdvisor" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('modalFacultyAdvisor')">&times;</span>
+            <h2>Edit Faculty Advisor</h2>
+            <form action=<%=`/society/${society._id}/faculty-advisor`%> method="post">
+                <label for="advisorName">Name:</label>
+                <input type="text" id="advisorName" name="name" value="<%= society.facultyAdvisor.name %>" required>
+                <label for="advisorEmail">Email:</label>
+                <input type="email" id="advisorEmail" name="email" value="<%= society.facultyAdvisor.email %>" required>
+                <label for="phoneno">Phone</label>
+                <input type="text" id="phoneno" name="phone" value="<%= society.facultyAdvisor.phoneno %>" required>
+                <button type="submit">Save</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Additional modals for other sections follow similar structure -->
+    <div id="modalSocietyHeader" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('modalSocietyHeader')">&times;</span>
+            <h2>Edit Society Header</h2>
+            <form>
+                <label for="societyName">Name:</label>
+                <input type="text" id="societyName" name="societyName" value="<%= society.name %>" required>
+                <label for="societyDescription">Description:</label>
+                <textarea id="societyDescription" name="societyDescription" required><%= society.description %></textarea>
+                <button type="submit">Save</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="modalSocietyHeader" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('modalSocietyHeader')">&times;</span>
+            <h2>Edit Society Header</h2>
+            <form>
+                <label for="societyName">Name:</label>
+                <input type="text" id="societyName" name="societyName" value="<%= society.name %>" required>
+                <label for="societyDescription">Description:</label>
+                <textarea id="societyDescription" name="societyDescription" required><%= society.description %></textarea>
+                <button type="submit">Save</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="modalSocietyHeader" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('modalSocietyHeader')">&times;</span>
+            <h2>Edit Society Header</h2>
+            <form>
+                <label for="societyName">Name:</label>
+                <input type="text" id="societyName" name="societyName" value="<%= society.name %>" required>
+                <label for="societyDescription">Description:</label>
+                <textarea id="societyDescription" name="societyDescription" required><%= society.description %></textarea>
+                <button type="submit">Save</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="modalSocietyHeader" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('modalSocietyHeader')">&times;</span>
+            <h2>Edit Society Header</h2>
+            <form>
+                <label for="societyName">Name:</label>
+                <input type="text" id="societyName" name="societyName" value="<%= society.name %>" required>
+                <label for="societyDescription">Description:</label>
+                <textarea id="societyDescription" name="societyDescription" required><%= society.description %></textarea>
+                <button type="submit">Save</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function openModal(modalId) {
+            document.getElementById(modalId).style.display = "block";
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = "none";
+        }
+    </script>
+</body>

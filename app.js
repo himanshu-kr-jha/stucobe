@@ -18,6 +18,7 @@ const User = require("./models/user"); // Path to your User model
 const Society = require("./models/society"); // Path to the Society model
 const SocietyAdmin = require("./models/societyAdmin");
 const RecruitmentSchema = require("./models/recruitment");
+const { configDotenv } = require("dotenv");
 const router = express.Router();
 
 
@@ -73,6 +74,7 @@ async function main() {
 app.use((req, res, next) => {
   res.locals.currUser = req.session.user;
   res.locals.Sadmin = req.session.societyadmin || null;
+  res.locals.mainAdmin=req.session.adminuser || null;
   // console.log(res.locals.currUser)
   next();
 });
@@ -127,6 +129,12 @@ app.post("/login", async (req, res) => {
       req.session.societyadmin = societyAdmin;
     };
 
+    // 3. Check if the user exists and if their email matches the main admin email from the .env file
+    if (!user || user.email === process.env.MAIN_ADMIN_EMAIL) {
+      req.session.adminuser = user;
+    }
+
+    // Attach user to the request for use in other routes
     // Store user info in session
     req.session.user = user;
     req.session.token = jwt.sign(
@@ -149,18 +157,18 @@ app.post("/logout", (req, res) => {
     if (err) {
       return res.status(500).json({ error: "Failed to log out" });
     }
-    res.status(200).json({ message: "Logout successful" });
+    res.redirect("/");
   });
 });
 
-// Create society route (Protected by Main Admin)
-app.get("/create-society", isAuthenticated, isMainAdmin, async (req, res) => {
-  console.log("inside the get api of create society");
+
+app.get("/create-society",isAuthenticated,async(req,res)=>{
+  res.render("society/createsociety.ejs");
 });
 app.post("/create-society", isAuthenticated, isMainAdmin, async (req, res) => {
-  const { name, description, societyAdminEmail } = req.body;
+  const { name, description, societyAdminEmail, logourl} = req.body;
 
-  if (!name || !description || !societyAdminEmail) {
+  if (!name || !description || !societyAdminEmail || !logourl) {
     return res.status(400).json({ error: "All fields are required" });
   }
 
@@ -176,7 +184,8 @@ app.post("/create-society", isAuthenticated, isMainAdmin, async (req, res) => {
       name,
       description,
       mainAdmin: mainAdmin._id, // Single ObjectId for the main admin
-      societyAdmin: [societyAdmin._id]
+      societyAdmin: [societyAdmin._id],
+      logo:logourl
     });
 
 
@@ -199,8 +208,13 @@ app.get("/society/all", async (req, res) => {
   try {
     // Fetch all societies
     const societies = await Society.find();
+  // .populate('mainAdmin', 'name email') // Populate mainAdmin with selected fields
+  // .populate('societyAdmin', 'name email') // Populate societyAdmin with selected fields
+  // .populate('followers', 'name email'); // Populate followers with selected fields
+
 
     // Check if no societies are found
+
     if (!societies || societies.length === 0) {
       return res.status(404).json({ message: "No societies found" });
     }
@@ -210,23 +224,28 @@ app.get("/society/all", async (req, res) => {
       return res.status(403).json({ message: "User not authenticated" });
     }
 
-    const userid = req.session.user._id;
+// Sort societies based on the number of followers (in descending order)
+    societies.sort((a, b) => b.followers.length - a.followers.length);
 
-    // Check if the user is an admin in any society
-    let hasPermission = false;
-
-    societies.forEach((society) => {
-      if (society.societyAdmin.includes(userid)) {
-        hasPermission = true;
-        console.log("User has permission");
-      } else {
-        console.log("User does not have permission");
-      }
-    });
-
-    // Log and send societies data
     console.log(societies);
-    res.json(societies);
+    res.render("society/home.ejs",{societies});
+    // const userid = req.session.user._id;
+
+    // // Check if the user is an admin in any society
+    // let hasPermission = false;
+
+    // societies.forEach((society) => {
+    //   if (society.societyAdmin.includes(userid)) {
+    //     hasPermission = true;
+    //     console.log("User has permission");
+    //   } else {
+    //     console.log("User does not have permission");
+    //   }
+    // });
+
+    // // Log and send societies data
+    // console.log(societies);
+    // res.json(societies);
 
   } catch (err) {
     console.error("Error fetching societies:", err);
@@ -238,12 +257,16 @@ app.get("/society/all", async (req, res) => {
 
 app.get("/user/profile", isAuthenticated, async (req, res) => {
   const user = await User.findById(req.session.user._id);
-  res.send(user);
-  console.log("inside user/profile");
-  console.log(user);
+  res.render("user/profile.ejs",{user});
 });
 
-app.patch('/user/update/profile', isLogged, async (req, res) => {
+app.get('/user/update/profile',isAuthenticated,async(req,res)=>{
+  const id = req.session.user._id;
+  const user= await User.findById(id);
+
+  res.render("user/update.ejs",{user});
+});
+app.post('/user/update/profile', isAuthenticated, async (req, res) => {
   const id = req.session.user._id;
   const { contact, department, year, resumeUrl, linkedinUrl, portfolioUrl } = req.body;
 
@@ -265,30 +288,34 @@ app.patch('/user/update/profile', isLogged, async (req, res) => {
       return res.status(404).json({ error: 'User not found' });
     }
 
-    res.status(200).json({ message: 'Profile updated successfully', user: updatedUser });
+    // res.status(200).json({ message: 'Profile updated successfully', user: updatedUser });
+    res.redirect("/user/profile");
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'An error occurred while updating the profile' });
   }
 });
 
-app.put('/user/:id/follow', isAuthenticated, async (req, res) => {
+app.post('/user/:id/follow', isAuthenticated, async (req, res) => {
   try {
-    const userid = req.session.user._id;
+    const userid = req.session.user._id; // Current user ID
+    const societyId = req.params.id; // Society ID
 
-    const updatedSociety = await Society.findByIdAndUpdate(
-      req.params.id,
-      {
-        $push: { followers: userid }, // Push the ObjectId directly
-      },
-      { new: true }
-    );
+    // Check if the user is already a follower
+    const society = await Society.findById(societyId);
 
-    if (!updatedSociety) {
+    if (!society) {
       return res.status(404).json({ error: 'Society not found' });
     }
 
-    res.json(updatedSociety);
+    if (!society.followers.includes(userid)) {
+      society.followers.push(userid);
+      await society.save();
+    }
+
+    // Add the user to the followers array
+    
+    res.redirect('/society/all');
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -296,26 +323,32 @@ app.put('/user/:id/follow', isAuthenticated, async (req, res) => {
 
 
 
+
 // SOCIETY
 app.get("/society/profile", isAuthenticated, async (req, res) => {
   const society = await Society.findById(req.session.societyadmin.society);
-  res.send(society)
+  res.render("society/show.ejs",{society});
 });
 
-app.patch("/society/profile", async (req, res) => {
+app.get("/society/:id",async(req,res)=>{
+  const society = await Society.findById(req.params.id)
+    .populate('societyAdmin','name email profile.department profile.year')
+    .populate('achievements')
+    .populate('announcements')
+    .populate('recruitments');
 
-  const society = await Society.findById(req.session.societyadmin.society);
-  res.send(society)
+    console.log(society);
+  res.render("society/show.ejs",{society});
 });
-app.put('/society/:id/basic-info', async (req, res) => {
+app.post('/society/:id/basic-info', async (req, res) => {
   try {
-    const { name, description } = req.body;
+    const { name, description,logourl } = req.body;
     const updatedSociety = await Society.findByIdAndUpdate(
       req.params.id,
-      { name, description },
+      { name:name, description:description,logo:logourl },
       { new: true }
     );
-    res.json(updatedSociety);
+    res.redirect(`/society/${updatedSociety._id}`);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -361,16 +394,17 @@ app.delete('/society/:id/society-admin/:adminId', async (req, res) => {
   }
 });
 
-app.put('/society/:id/faculty-advisor', async (req, res) => {
+app.post('/society/:id/faculty-advisor', async (req, res) => {
   try {
-    const { name, email, phoneno } = req.body;
-    const updatedProfile = { name, email, phoneno };
+    const { name, email, phone } = req.body;
+    const updatedProfile = { name, email, phone };
     const updatedSociety = await Society.findByIdAndUpdate(
       req.params.id,
       { facultyAdvisor: updatedProfile },
       { new: true }
     );
-    res.json(updatedSociety);
+    // res.json(updatedSociety);
+    res.redirect(`/society/${updatedSociety._id}`);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

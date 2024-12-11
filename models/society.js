@@ -42,7 +42,7 @@ const SocietySchema = new Schema({
       date: { type: Date }
     }
   ],
-  images: [{ type: String }], // Array of image URLs or paths
+  logo: { type: String }, // Array of image URLs or paths
   announcements: [
     {
       title: { type: String },

@@ -7,7 +7,7 @@ const UserSchema = new Schema({
   password: { type: String, required: true }, // Required during registration
   role: {
     type: String,
-    enum: ['societyAdmin', 'user'],
+    enum: ['societyAdmin', 'student'],
     default: 'student'
   },
   profile: { // Optional fields

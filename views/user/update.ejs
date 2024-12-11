@@ -1,0 +1,149 @@
+<% layout("layouts/boilerplate") %>
+    <style>
+        /* General Styling */
+        body {
+            font-family: 'Arial', sans-serif;
+            padding-top: 5rem;
+            background-color: #f8f9fa;
+        }
+    
+        .form-container {
+            max-width: 600px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border: 1px solid #dee2e6;
+        }
+    
+        .form-container h1 {
+            text-align: center;
+            margin-bottom: 2rem;
+            color: #007bff;
+            font-size: 1.8rem;
+            text-transform: uppercase;
+        }
+    
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+    
+        .form-group label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+            color: #495057;
+        }
+    
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.8rem;
+            font-size: 1rem;
+            border: 1px solid #ced4da;
+            border-radius: 5px;
+            background-color: #f8f9fa;
+            transition: border-color 0.3s ease;
+        }
+    
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            border-color: #007bff;
+            outline: none;
+        }
+    
+        .btn-container {
+            text-align: center;
+            margin-top: 1.5rem;
+        }
+    
+        .btn {
+            padding: 0.8rem 1.5rem;
+            font-size: 1rem;
+            color: #ffffff;
+            background-color: #007bff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+    
+        .btn:hover {
+            background-color: #0056b3;
+            transform: translateY(-2px);
+        }
+    
+        .btn:active {
+            transform: translateY(0);
+        }
+    
+        .btn.cancel {
+            background-color: #6c757d;
+        }
+    
+        .btn.cancel:hover {
+            background-color: #5a6268;
+        }
+    
+        @media (max-width: 768px) {
+            .form-container {
+                padding: 1.5rem;
+            }
+    
+            .btn {
+                font-size: 0.9rem;
+                padding: 0.7rem 1.2rem;
+            }
+        }
+    </style>
+    
+    <div class="form-container">
+        <h1>Update Profile</h1>
+        <form action="/user/update/profile" method="POST">
+            <div class="form-group">
+                <label for="contact">Contact</label>
+                <input type="text" id="contact" name="contact" value="<%= user.profile?.contact || '' %>" placeholder="Enter your contact number" required />
+            </div>
+            
+            <div class="form-group">
+                <label for="department">Department</label>
+                <input type="text" id="department" name="department" value="<%= user.profile?.department || '' %>" placeholder="Enter your department" required />
+            </div>
+            
+            <div class="form-group">
+                <label for="year">Year</label>
+                <select id="year" name="year" required>
+                    <option value="1" <%= user.profile?.year === 1 ? "selected" : "" %>>First Year</option>
+                    <option value="2" <%= user.profile?.year === 2 ? "selected" : "" %>>Second Year</option>
+                    <option value="3" <%= user.profile?.year === 3 ? "selected" : "" %>>Third Year</option>
+                    <option value="4" <%= user.profile?.year === 4 ? "selected" : "" %>>Final Year</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="resumeUrl">Resume URL</label>
+                <input type="url" id="resumeUrl" name="resumeUrl" value="<%= user.profile?.resumeUrl || '' %>" placeholder="Enter your resume URL" required />
+            </div>
+            
+            <div class="form-group">
+                <label for="linkedinUrl">LinkedIn URL</label>
+                <input type="url" id="linkedinUrl" name="linkedinUrl" value="<%= user.profile?.linkedinUrl || '' %>" placeholder="Enter your LinkedIn profile URL" required />
+            </div>
+            
+            <div class="form-group">
+                <label for="portfolioUrl">Portfolio URL</label>
+                <input type="url" id="portfolioUrl" name="portfolioUrl" value="<%= user.profile?.portfolioUrl || '' %>" placeholder="Enter your portfolio URL" />
+            </div>
+            
+    
+            <div class="btn-container">
+                <button type="submit" class="btn">Update Profile</button>
+                <a href="/profile" class="btn cancel">Cancel</a>
+            </div>
+        </form>
+    </div>
+    
+</div>

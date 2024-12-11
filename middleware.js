@@ -71,7 +71,7 @@ module.exports.isMainAdmin = async (req, res, next) => {
     }
 
     // Attach user to the request for use in other routes
-    req.user = user;
+    req.admin = user;
     next(); // Proceed to the next middleware/route
   } catch (err) {
     res.status(500).json({ error: 'Error verifying admin role.' });

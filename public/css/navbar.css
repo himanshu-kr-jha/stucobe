@@ -10,7 +10,7 @@
 
 /* Add padding to the body to prevent content from being hidden under the navbar */
 body {
-    padding-top: 60px; /* Adjust this value based on the navbar's height */
+    padding-top: 4rem; /* Adjust this value based on the navbar's height */
 }
 /* Style the form button inside navbar */
 .nav-form-button {
@@ -70,8 +70,8 @@ body {
     background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3E%3Cpath stroke='rgba(255,255,255,0.8)' stroke-width='2' stroke-linecap='round' stroke-miterlimit='10' d='M4 7h22M4 15h22M4 23h22'/%3E%3C/svg%3E");
 }
 
-/* Navbar Container */
-.navbar .container {
+/* Navbar nav-nav-container */
+.navbar .nav-container {
     max-width: 1200px;
 }
 
