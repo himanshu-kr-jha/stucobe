@@ -22,12 +22,12 @@
                     </li>
                 <%}else{%>
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <p class="nav-link dropdown-toggle" href="/user" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                             Profile
-                        </a>
+                        </p>
                         <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                            <li><a class="dropdown-item" href="#">Accounts</a></li>
-                            <li><a class="dropdown-item" href="#">Update</a></li>
+                            <li><a class="dropdown-item" href="/user/profile">Accounts</a></li>
+                            <li><a class="dropdown-item" href="/user/update/profile">Update</a></li>
                             <li>
                                 <form action="/logout" method="POST" style="display:inline;">
                                     <button type="submit" class="dropdown-item" style="background:none; border:none; color: inherit; padding: 0; margin-left: 1rem;">
@@ -37,9 +37,21 @@
                             </li>
                         </ul>
                     </li>
-                    
-                    
+                    <%if(Sadmin && Sadmin!=null){%>
+                        <li class="nav-item dropdown">
+                            <p class="nav-link dropdown-toggle" href="/user" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Society
+                            </p>
+                            <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                <li><a class="dropdown-item" href="/society/profile">About</a></li>
+                                <li><a class="dropdown-item" href="/society/update">Update</a></li>
+                            </ul>
+                        </li>
+                    <%}else{%>
+                        <p></p>
+                    <%}%>    
                 <%}%>
+
                 
             </ul>
         </div>

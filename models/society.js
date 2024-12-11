@@ -47,7 +47,7 @@ const SocietySchema = new Schema({
     {
       title: { type: String },
       content: { type: String },
-      date: { type: Date }
+      date: { type: Date, default:Date.now()}
     }
   ],
   recruitments: [

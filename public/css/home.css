@@ -1,76 +1,128 @@
 /* General Reset */
-body {
+* {
     margin: 0;
     padding: 0;
-    font-family: 'Roboto', Arial, sans-serif;
-    background-color: #f8f9fa; /* Light background for modern look */
+    box-sizing: border-box;
+}
+
+html, body {
+    height: 100%;
+    font-family: 'Arial', sans-serif;
     color: #333;
     line-height: 1.6;
 }
 
 /* Hero Section */
-.hero-section {
-    background: linear-gradient(to bottom right, #004aad, #00b4d8); /* Vibrant gradient background */
+.hero {
+    background: linear-gradient(135deg, #0077b6, #00b4d8); /* Gradient background */
     color: white;
-    height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
     text-align: center;
-    padding: 20px;
+    padding: 80px 20px;
+    margin-bottom: 40px;
 }
 
-.hero-content h1 {
+.hero h1 {
     font-size: 3rem;
-    margin-bottom: 1rem;
-}
-
-.hero-content .highlight {
-    color: #ffdd00; /* Bright highlight for 'Destinate !t' */
     font-weight: bold;
+    margin-bottom: 15px;
 }
 
-.hero-content p {
+.hero p {
     font-size: 1.2rem;
-    margin-bottom: 1rem;
+    margin-top: 10px;
 }
 
-.hero-content .explore-btn {
-    padding: 0.75rem 1.5rem;
+/* Main Content */
+.main-content {
+    padding: 20px;
+    background: #f5f5f5;
+}
+
+.feature {
+    background-color: #ffffff;
+    padding: 20px;
+    margin-bottom: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.feature h2 {
+    font-size: 2rem;
+    color: #0077b6;
+    margin-bottom: 10px;
+}
+
+.feature p {
     font-size: 1.1rem;
-    background-color: #ffdd00; /* Bold and engaging button color */
-    color: black;
-    border: none;
-    border-radius: 5px;
-    text-decoration: none;
-    transition: background-color 0.3s ease;
+    color: #555;
+    margin-bottom: 10px;
 }
 
-.hero-content .explore-btn:hover {
-    background-color: #ff6b6b; /* Lighter shade on hover */
-    text-decoration: none;
+.feature ul {
+    list-style-type: disc;
+    margin-left: 20px;
 }
 
-/* Container Styling */
-.container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 15px;
+.feature li {
+    font-size: 1rem;
+    color: #333;
+    margin-bottom: 8px;
 }
 
-/* Footer */
+/* Footer Styles */
 footer {
-    background-color: #004aad;
+    background-color: #0077b6;
     color: white;
-    padding: 15px 0;
+    padding: 20px 0;
+    font-family: Arial, sans-serif;
     text-align: center;
+    margin-top: 40px;
+}
+
+footer p {
+    margin-bottom: 10px;
+    font-size: 1rem;
 }
 
 footer a {
-    color: #ffdd00;
+    color: #fff;
     text-decoration: none;
+    margin: 0 10px;
+    font-size: 1.2em;
 }
 
 footer a:hover {
-    text-decoration: underline;
+    color: #00b4d8;
+}
+
+footer .fab {
+    font-size: 1.5em;
+    transition: color 0.3s ease;
+}
+
+footer .fab:hover {
+    color: #00b4d8;
+}
+
+/* Media Queries for Responsiveness */
+@media (max-width: 768px) {
+    .hero h1 {
+        font-size: 2rem;
+    }
+
+    .hero p {
+        font-size: 1rem;
+    }
+
+    .main-content {
+        padding: 10px;
+    }
+
+    .feature h2 {
+        font-size: 1.6rem;
+    }
+
+    .feature p {
+        font-size: 1rem;
+    }
 }
