@@ -18,8 +18,8 @@ const User = require("./models/user"); // Path to your User model
 const Society = require("./models/society"); // Path to the Society model
 const SocietyAdmin = require("./models/societyAdmin");
 const RecruitmentSchema = require("./models/recruitment");
-const { configDotenv } = require("dotenv");
-const router = express.Router();
+// const { configDotenv } = require("dotenv");
+const methodOverride = require('method-override');
 
 
 app.engine("ejs", ejsMate);
@@ -30,7 +30,9 @@ app.use(express.static(path.join(__dirname, "/public")));
 app.use(express.static(path.join(__dirname, "/public/js")));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
+app.use(methodOverride('_method'));
 app.engine("ejs", ejsMate);
+
 
 // Session setup
 app.use(
@@ -78,12 +80,25 @@ app.use((req, res, next) => {
   // console.log(res.locals.currUser)
   next();
 });
+const logUserDetails = (req, res, next) => {
+  const user = req.session.user || 'Guest'; // Assuming user details are stored in req.user (e.g., from authentication)
+  const method = req.method;
+  const url = req.originalUrl;
+  const timestamp = new Date().toISOString();
 
+  console.log(`[${timestamp}] ${method} request to ${url} by ${user}`);
+  
+  // Pass control to the next middleware or route handler
+  next();
+};
+
+// Use the middleware globally (for all routes)
+app.use(logUserDetails);
 app.get("/register", (req, res) => {
   res.render("user/register.ejs");
 });
 app.post("/register", async (req, res) => {
-  console.log(req.body);
+  // console.log(req.body);
   const { name, email, password } = req.body;
 
   // Validate input
@@ -190,13 +205,13 @@ app.post("/create-society", isAuthenticated, isMainAdmin, async (req, res) => {
 
 
     const savedSociety = await newSociety.save();
-    console.log(savedSociety);
+    // console.log(savedSociety);
     const newAdmin = new SocietyAdmin({
       society: savedSociety._id,
       societyAdmin: societyAdmin._id
     });
     const savedAdmin = await newAdmin.save();
-    console.log("saved admin----", savedAdmin)
+    // console.log("saved admin----", savedAdmin)
     res.status(201).json({ message: "Society created successfully!", societyId: newSociety._id });
   } catch (err) {
     console.error(err); // Log error for debugging
@@ -204,7 +219,7 @@ app.post("/create-society", isAuthenticated, isMainAdmin, async (req, res) => {
   }
 });
 
-app.get("/society/all", async (req, res) => {
+app.get("/main/society/all", async (req, res) => {
   try {
     // Fetch all societies
     const societies = await Society.find();
@@ -220,14 +235,14 @@ app.get("/society/all", async (req, res) => {
     }
 
     // Validate session user
-    if (!req.session || !req.session.user || !req.session.user._id) {
-      return res.status(403).json({ message: "User not authenticated" });
-    }
+    // if (!req.session || !req.session.user || !req.session.user._id) {
+    //   return res.status(403).json({ message: "User not authenticated" });
+    // }
 
 // Sort societies based on the number of followers (in descending order)
     societies.sort((a, b) => b.followers.length - a.followers.length);
 
-    console.log(societies);
+    // console.log(societies);
     res.render("society/home.ejs",{societies});
     // const userid = req.session.user._id;
 
@@ -326,19 +341,30 @@ app.post('/user/:id/follow', isAuthenticated, async (req, res) => {
 
 // SOCIETY
 app.get("/society/profile", isAuthenticated, async (req, res) => {
-  const society = await Society.findById(req.session.societyadmin.society);
+  const society = await Society.findById(req.session.societyadmin.society)
+  .populate('societyAdmin','name email profile.department profile.year')
+    .populate('achievements')
+    .populate('announcements')
+    .populate({
+      path: 'recruitments.recruitmentId', // Populate recruitments
+      model: 'Recruitment',
+      select: 'title description eligibility deadline createdBy applications',
+    });
+  // console.log(society);
   res.render("society/show.ejs",{society});
 });
 
 app.get("/society/:id",async(req,res)=>{
   const society = await Society.findById(req.params.id)
+  .populate('achievements','title description date')
     .populate('societyAdmin','name email profile.department profile.year')
-    .populate('achievements')
     .populate('announcements')
-    .populate('recruitments');
-
-    console.log(society);
-  res.render("society/show.ejs",{society});
+    .populate('recruitments').lean();
+    // console.log("society---------",society);
+    // conso
+  if(society!=undefined){
+    res.render("society/show.ejs",{society});
+  }
 });
 app.post('/society/:id/basic-info', async (req, res) => {
   try {
@@ -366,7 +392,10 @@ app.post('/society/:id/society-admin', async (req, res) => {
       { $addToSet: { societyAdmin: societyAdmin._id } },
       { new: true }
     );
-    res.json(updatedSociety);
+    const societyadmindetail=new SocietyAdmin({society:req.params.id,societyAdmin:societyAdmin._id});
+    await societyadmindetail.save();
+    // res.json(updatedSociety);
+    res.redirect(`/society/profile`);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -410,32 +439,136 @@ app.post('/society/:id/faculty-advisor', async (req, res) => {
   }
 });
 
-app.put('/society/:id/achievements', async (req, res) => {
+app.post('/society/:id/achievements', async (req, res) => {
   try {
     const { title, description, date } = req.body;
-    const achievements = { title, description, date };
+    const parsedDate = new Date(date);
+    // console.log("date",date,"parsed date",parsedDate);
+
+    const achievements = { title:title, description:description, date:parsedDate };
     const updatedSociety = await Society.findByIdAndUpdate(
       req.params.id,
       { $push: { achievements: achievements } },
       { new: true }
     );
-    res.json(updatedSociety);
+    res.redirect(`/society/profile`);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 });
 
+app.put('/society/:id/achievements/:achievementId', async (req, res) => {
+  try {
+    const { description } = req.body;
+
+    const updatedSociety = await Society.findOneAndUpdate(
+      {
+        _id: req.params.id,
+        "achievements._id": req.params.achievementId, // Match society ID and achievement ID
+      },
+      {
+        $set: { "achievements.$.description": description }, // Update the description of the matched achievement
+      },
+      { new: true } // Return the updated document
+    );
+
+    if (!updatedSociety) {
+      return res.status(404).json({ error: "Society or achievement not found" });
+    }
+
+    res.redirect(`/society/profile`);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.delete("/society/:id/:achievementid/remove", async (req, res) => {
+  try {
+    const { id, achievementid } = req.params;
+
+
+    // Update the society document by pulling the specific achievement
+    const updatedSociety = await Society.findByIdAndUpdate(
+      id,
+      { $pull: { achievements: { _id: achievementid } } }, // Adjust based on your schema
+      { new: true } // Return the updated document
+    );
+
+    if (!updatedSociety) {
+      return res.status(404).json({ error: "Society or achievement not found" });
+    }
+
+    // Redirect or respond based on the context
+    res.redirect("/society/profile");
+  } catch (error) {
+    console.error("Error while deleting achievement:", error.message);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+
 app.post('/society/:id/announcements', async (req, res) => {
   try {
     const { title, content } = req.body;
-    const announcements = { title, content };
+    const announcements = { title:title, content:content };
     const updatedSociety = await Society.findByIdAndUpdate(
       req.params.id,
       { $push: { announcements: announcements } },
       { new: true }
     );
-    res.json(updatedSociety);
+    res.redirect("/society/profile");
   } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.put('/society/:id/announcement/:announcementid', async (req, res) => {
+  try {
+    const { title, content } = req.body;
+
+    const updatedSociety = await Society.findOneAndUpdate(
+      {
+        _id: req.params.id,
+        "announcements._id": req.params.announcementid, // Match society ID and announcement ID
+      },
+      {
+        $set: {
+          "announcements.$.title": title,
+          "announcements.$.content": content,
+        }, // Update the title and content of the matched announcement
+      },
+      { new: true } // Return the updated document
+    );
+
+    if (!updatedSociety) {
+      return res.status(404).json({ error: "Society or announcement not found" });
+    }
+
+    res.redirect(`/society/profile`);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.delete("/society/:id/:announcementid/remove/announcement", async (req, res) => {
+  try {
+    const { id, announcementid } = req.params;
+
+
+    // Update the society document by pulling the specific achievement
+    const updatedSociety = await Society.findByIdAndUpdate(
+      id,
+      { $pull: { announcements: { _id: announcementid } } }, // Adjust based on your schema
+    );
+
+    if (!updatedSociety) {
+      return res.status(404).json({ error: "Society or achievement not found" });
+    }
+
+    // Redirect or respond based on the context
+    res.redirect("/society/profile");
+  } catch (error) {
+    console.error("Error while deleting achievement:", error.message);
     res.status(500).json({ error: error.message });
   }
 });
@@ -455,9 +588,7 @@ app.post('/society/:id/recruitments', async (req, res) => {
       createdBy: req.session.user._id,
     });
     const savedRecruitment = await recruitment.save();
-    console.log("Recruitment saved:", savedRecruitment);
-
-    // Update the society with the new recruitment
+    
     const updatedSociety = await Society.findByIdAndUpdate(
       societyId,
       {
@@ -476,17 +607,93 @@ app.post('/society/:id/recruitments', async (req, res) => {
       return res.status(404).json({ error: "Society not found" });
     }
 
-    console.log("Society updated:", updatedSociety);
-    res.status(201).json({
-      message: "Recruitment added successfully",
-      recruitment: savedRecruitment,
-      society: updatedSociety,
-    });
+    // console.log("Society updated:", updatedSociety);
+    // res.status(201).json({
+    //   message: "Recruitment added successfully",
+    //   recruitment: savedRecruitment,
+    //   society: updatedSociety,
+    // });
+    res.redirect("/society/profile");
   } catch (error) {
     console.error("Error adding recruitment:", error);
     res.status(500).json({ error: error.message });
   }
 });
+
+app.delete('/society/:id/recruitment/:recruitmentid/remove', async (req, res) => {
+  try {
+
+    // Create and save the recruitment
+    
+    const updatedSociety = await Society.findByIdAndUpdate(
+      req.params.id,
+      {$pull: { recruitments: { recruitmentId: req.params.recruitmentid}}},
+    );
+    const updatedRecruitment= await RecruitmentSchema.findByIdAndDelete(req.params.recruitmentid);
+    if (!updatedSociety) {
+      return res.status(404).json({ error: "Society not found" });
+    }
+    if (!updatedRecruitment) {
+      return res.status(404).json({ error: "recruitment not found" });
+    }
+
+    // console.log("Society updated:", updatedSociety);
+    // res.status(201).json({
+    //   message: "Recruitment added successfully",
+    //   recruitment: savedRecruitment,
+    //   society: updatedSociety,
+    // });
+    res.redirect("/society/profile");
+  } catch (error) {
+    console.error("Error adding recruitment:", error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.put('/society/:id/recruitment/:recruitmentId', async (req, res) => {
+  try {
+    const { title, description, eligibility, deadline } = req.body;
+    const { id: societyId, recruitmentId } = req.params;
+    const parsedDate = new Date(deadline);
+    // Find and update the recruitment
+    const updatedRecruitment = await RecruitmentSchema.findByIdAndUpdate(
+      recruitmentId,
+      {
+        title,
+        description,
+        eligibility,
+        deadline,
+        updatedBy: req.session.user._id, // Optionally track who updated it
+      },
+      { new: true } // Return the updated document
+    );
+
+    if (!updatedRecruitment) {
+      return res.status(404).json({ error: "Recruitment not found" });
+    }
+    // Update the corresponding entry in the society's recruitments array
+    const updatedSociety = await Society.findOneAndUpdate(
+      { _id: societyId, "recruitments.recruitmentId": recruitmentId },
+      {
+        $set: {
+          "recruitments.$.title": updatedRecruitment.title,
+          "recruitments.$.deadline": updatedRecruitment.deadline,
+        },
+      },
+      { new: true } // Return the updated document
+    );
+
+    if (!updatedSociety) {
+      return res.status(404).json({ error: "Society or recruitment in society not found" });
+    }
+
+    res.redirect("/society/profile"); // Redirect after successful update
+  } catch (error) {
+    console.error("Error updating recruitment:", error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
 
 app.get("/events", async (req, res) => {
   try {
@@ -540,7 +747,7 @@ app.get("/events", async (req, res) => {
     // Sort the allData array by date in descending order
     allData.sort((a, b) => new Date(b.date) - new Date(a.date));
 
-    console.log(allData); // Optional: For debugging
+    // console.log(allData); // Optional: For debugging
 
     // Render the sorted data
     res.render("event/event.ejs", { allData });

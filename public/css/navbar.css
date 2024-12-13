@@ -1,9 +1,9 @@
 /* General Navbar Styling */
-.navbar {
+.navbar-mainpage {
     position: fixed; /* Sticks the navbar to the top */
     top: 0; /* Ensures it stays at the top of the viewport */
     width: 100%; /* Full width to span the viewport */
-    z-index: 1030; /* Ensures it stays above other content */
+    z-index: 999; /* Ensures it stays above other content */
     background: linear-gradient(to right, #004aad, #0074e4); /* Blue gradient */
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
 }
@@ -25,7 +25,7 @@ body {
 }
 
 /* Hover effect for the logout button */
-.navbar form button:hover {
+.navbar-mainpage form button:hover {
     background-color: #ffdd00; /* Background color on hover */
     color: #004aad; /* Change text color on hover */
 }
