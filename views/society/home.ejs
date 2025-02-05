@@ -89,6 +89,7 @@ button {
     margin:1rem;
     cursor: pointer;
     font-size: 1rem;
+    width: 30% !important;
     transition: background-color 0.3s, transform 0.2s;
 }
 
@@ -335,7 +336,7 @@ a:hover {
                 </div>
                 <%if(currUser!=undefined && !society.followers.includes(currUser._id)){%>
                     <form action=<%=`/user/${society._id}/follow`%> method=post>
-                        <button>Follow</button>
+                        <button class="btn btn-outline-primary">Follow</button>
                     </form>
                 <%}else{%>
                     <p>You are following.</p>

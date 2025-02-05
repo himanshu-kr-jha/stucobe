@@ -1,0 +1,63 @@
+<% layout("layouts/boilerplate") %>
+<style>
+    body {
+        margin: 0;
+        padding-top: 10rem;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        background: linear-gradient(135deg, #004aad, #34495e);
+        color: #ffffff;
+        font-family: "Arial", sans-serif;
+        text-align: center;
+    }
+
+    .container-card h1 {
+        font-size: 3rem;
+        margin: 0;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    }
+
+    .container-card p {
+        font-size: 1.5rem;
+        margin-top: 10px;
+        color: #f1f1f1;
+    }
+
+    .container-card {
+        max-width: 600px;
+        padding: 20px;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        border-radius: 10px;
+        background: rgba(0, 0, 0, 0.3);
+        box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.5);
+    }
+
+    .container-card a {
+        display: inline-block;
+        margin-top: 20px;
+        padding: 10px 20px;
+        background: #ffdd57;
+        color: #34495e;
+        font-size: 1rem;
+        font-weight: bold;
+        text-decoration: none;
+        border-radius: 5px;
+        box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2);
+        transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    .container-card a:hover {
+        background: #f39c12;
+        color: #ffffff;
+    }
+</style>
+
+<body>
+    <div class="container-card">
+        <h1>Something went wrong!</h1>
+        <p><%= message %></p>
+        <!-- <a href="/">Go Back Home</a> -->
+    </div>
+</body>

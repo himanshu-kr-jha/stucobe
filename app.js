@@ -2,7 +2,7 @@ if (process.env.NODE_ENV != "production") {
   require("dotenv").config();
 }
 
-const port = process.env.PORT;
+const port = process.env.PORT || 3000;
 const jwt_secret_token = process.env.JWT_SECRET_TOKEN;
 const express = require("express");
 const app = express();
@@ -73,6 +73,7 @@ async function main() {
 //   console.log("Token from session:", req.session?.token);
 //   next();
 // });
+
 app.use((req, res, next) => {
   res.locals.currUser = req.session.user;
   res.locals.Sadmin = req.session.societyadmin || null;
@@ -129,7 +130,8 @@ app.post("/login", async (req, res) => {
   const { email, password } = req.body;
 
   try {
-    const user = await User.findOne({ email });
+    let Email=email.toLowerCase();
+    const user = await User.findOne({ email:Email });
     if (!user) {
       return res.status(404).json({ error: "User not found" });
     }
@@ -161,7 +163,7 @@ app.post("/login", async (req, res) => {
     res.redirect("/");
   } catch (err) {
     console.error("Login error:", err.message);
-    res.status(500).json({ error: "An internal server error occurred" });
+    // res.status(500).json({ error: "An internal server error occurred" });
   }
 });
 
@@ -219,7 +221,7 @@ app.post("/create-society", isAuthenticated, isMainAdmin, async (req, res) => {
   }
 });
 
-app.get("/main/society/all", async (req, res) => {
+app.get("/society/all", async (req, res) => {
   try {
     // Fetch all societies
     const societies = await Society.find();
@@ -339,6 +341,16 @@ app.post('/user/:id/follow', isAuthenticated, async (req, res) => {
 
 
 
+app.get("/society/:id/profile", async(req,res)=>{
+  const societies=await SocietyAdmin.find({societyAdmin:req.params.id})
+  .populate({
+    path:'society',
+    model: 'Society',
+    select: 'logo name',
+  });
+  res.render("society/societyadmin.ejs",{societies});
+  console.log(societies);
+});
 // SOCIETY
 app.get("/society/profile", isAuthenticated, async (req, res) => {
   const society = await Society.findById(req.session.societyadmin.society)
@@ -413,7 +425,12 @@ app.delete('/society/:id/society-admin/:adminId', async (req, res) => {
         { $pull: { societyAdmin: adminId } },
         { new: true }
       );
-      res.json(updatedSociety);
+      const societyAdmin= await SocietyAdmin.findOneAndDelete({
+        societyAdmin:req.params.adminId,
+        society:req.params.id
+      });
+      res.redirect("/society/profile");
+      // res.json(updatedSociety);
     } else {
       res.status(500).json({ error: "cannot delete yourself" });
     }
@@ -757,11 +774,23 @@ app.get("/events", async (req, res) => {
   }
 });
 
+app.use((req, res, next) => {
+  const originalSend = res.send;
+  console.log("used---------")
+  res.send = function (body) {
+      if (body instanceof Error) {
+          // Render the error page instead of sending raw error text
+          return res.status(body.status || 500).render('error/error.ejs', { message: body.message });
+      }
+      return originalSend.apply(this, arguments);
+  };
+  next();
+});
 
 app.get("/", (req, res) => {
   res.render("home/home.ejs");
 });
 
 app.listen(port, () => {
-  console.log(`Server started at port ${port}`);
+  console.log(`Server started at http://localhost:${port}`);
 });

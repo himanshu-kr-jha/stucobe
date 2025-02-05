@@ -92,6 +92,7 @@ body {
     background: linear-gradient(to right, #ffdd00, #ffe680); /* Yellow gradient hover effect */
 }
 
+
 </style>
 <nav class="navbar navbar-expand-lg navbar-light bg-light navbar-mainpage">
     <div class="container nav-container">
@@ -102,7 +103,7 @@ body {
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav ms-auto">
                 <li class="nav-item">
-                    <a class="nav-link" href="/main/society/all">Society</a>
+                    <a class="nav-link" href="/society/all">Society</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link " href="/events">Events</a>
@@ -128,19 +129,10 @@ body {
                     <%}else{%>
                         <p></p>
                     <%}%>    
-                    <%if(Sadmin){%>
-                        <li class="nav-item dropdown">
-                            <p class="nav-link dropdown-toggle" href="/user" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                Society
-                            </p>
-                            <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                <li><a class="dropdown-item" href="/society/profile">About</a></li>
-                                <li><a class="dropdown-item" href="/society/update">Update</a></li>
-                            </ul>
-                        </li>
-                    <%}else{%>
-                        <p></p>
-                    <%}%>    
+                    
+
+                        
+                      
                     <li class="nav-item dropdown">
                         <p class="nav-link dropdown-toggle" href="/user" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                             Profile
@@ -148,6 +140,10 @@ body {
                         <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                             <li><a class="dropdown-item" href="/user/profile">Accounts</a></li>
                             <li><a class="dropdown-item" href="/user/update/profile">Update</a></li>
+                            <%if(Sadmin){%>
+                                <li> <a class="dropdown-item" href=<%=`/society/${Sadmin.societyAdmin}/profile`%>>Manage Society</a>
+                            <%}else{%>
+                            <%}%>  
                             <li>
                                 <form action="/logout" method="POST" style="display:inline;">
                                     <button type="submit" class="dropdown-item" style="background:none; border:none; color: inherit; padding: 0; margin-left: 1rem;">

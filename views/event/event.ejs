@@ -1,125 +1,134 @@
 <% layout("layouts/boilerplate") %>
 <style>
-    body {
-        font-family: Arial, sans-serif;
-        background-color: #f4f4f4;
-        margin: 0;
-        padding-top: 4.5rem;
-    }
+  body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+      margin: 0;
+      padding-top: 4.5rem;
+  }
 
-    h1 {
-        text-align: center;
-        padding: 20px;
-        background-color: #333;
-        color: white;
-        font-size: 2rem;
-        letter-spacing: 1px;
-        animation: fadeIn 2s ease-in-out;
-    }
+  h1 {
+      text-align: center;
+      padding: 20px;
+      background-color: #333;
+      color: white;
+      font-size: 2rem;
+      letter-spacing: 1px;
+      animation: fadeIn 2s ease-in-out;
+  }
 
-    @keyframes fadeIn {
-        0% { opacity: 0; }
-        100% { opacity: 1; }
-    }
+  @keyframes fadeIn {
+      0% { opacity: 0; }
+      100% { opacity: 1; }
+  }
 
-    #events-container {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-        gap: 20px;
-        padding: 20px;
-    }
+  #events-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 20px;
+      padding: 20px;
+  }
 
-    .item {
-        background-color: white;
-        border-radius: 8px;
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-        padding: 20px;
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
-    }
+  .item {
+      background-color: white;
+      border-radius: 8px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      padding: 20px;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+  }
 
-    .item:hover {
-        transform: translateY(-10px);
-        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
-    }
+  .item:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+  }
 
-    .item-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 15px;
-    }
+  .item-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+  }
 
-    .item-header h2 {
-        margin: 0;
-        font-size: 1.3rem;
-        letter-spacing: 0.5px;
-        transition: color 0.3s ease;
-    }
+  .item-header h2 {
+      margin: 0;
+      font-size: 1.3rem;
+      letter-spacing: 0.5px;
+      transition: color 0.3s ease;
+  }
 
-    .item-header h2:hover {
-        color: #007BFF;
-    }
+  .item-header h2:hover {
+      color: #007BFF;
+  }
 
-    .item-date {
-        font-size: 0.9em;
-        color: gray;
-    }
+  .item-date {
+      font-size: 0.9em;
+      color: gray;
+  }
 
-    .event, .announcement, .recruitment {
-        margin-top: 10px;
-    }
+  img {
+      width: 100%;
+      height: auto;
+      border-radius: 5px;
+      margin: 10px 0;
+      object-fit: cover;
+  }
 
-    .event p, .announcement p, .recruitment p {
-        margin: 0;
-    }
+  .event, .announcement, .recruitment {
+      margin-top: 10px;
+      flex-grow: 1;
+      overflow: hidden;
+  }
 
-    /* Colorful tags */
-    .event-tag {
-        background-color: #f39c12;
-        color: white;
-        padding: 5px 10px;
-        border-radius: 5px;
-        font-size: 0.9rem;
-        font-weight: bold;
-        display: inline-block;
-        margin-bottom: 10px;
-    }
+  .event p, .announcement p, .recruitment p {
+      margin: 0;
+      max-height: 120px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+  }
 
-    .announcement-tag {
-        background-color: #e74c3c;
-        color: white;
-        padding: 5px 10px;
-        border-radius: 5px;
-        font-size: 0.9rem;
-        font-weight: bold;
-        display: inline-block;
-        margin-bottom: 10px;
-    }
+  .event p:hover, .announcement p:hover, .recruitment p:hover {
+      overflow-y: auto;
+      max-height: 200px;
+  }
 
-    .recruitment-tag {
-        background-color: #2ecc71;
-        color: white;
-        padding: 5px 10px;
-        border-radius: 5px;
-        font-size: 0.9rem;
-        font-weight: bold;
-        display: inline-block;
-        margin-bottom: 10px;
-    }
-    
-    /* Additional hover effects for the tags */
-    .event-tag:hover {
-        background-color: #f1c40f;
-    }
+  /* Colorful tags */
+  .event-tag, .announcement-tag, .recruitment-tag {
+      padding: 5px 10px;
+      border-radius: 5px;
+      font-size: 0.9rem;
+      font-weight: bold;
+      display: inline-block;
+      margin-bottom: 10px;
+      color: white;
+  }
 
-    .announcement-tag:hover {
-        background-color: #c0392b;
-    }
+  .event-tag {
+      background-color: #f39c12;
+  }
 
-    .recruitment-tag:hover {
-        background-color: #27ae60;
-    }
+  .announcement-tag {
+      background-color: #e74c3c;
+  }
 
+  .recruitment-tag {
+      background-color: #2ecc71;
+  }
+
+  /* Additional hover effects for tags */
+  .event-tag:hover {
+      background-color: #f1c40f;
+  }
+
+  .announcement-tag:hover {
+      background-color: #c0392b;
+  }
+
+  .recruitment-tag:hover {
+      background-color: #27ae60;
+  }
 </style>
 
 <body>
