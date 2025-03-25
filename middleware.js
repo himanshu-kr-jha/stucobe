@@ -1,7 +1,7 @@
 const jwt = require('jsonwebtoken');
 const User = require('./models/user');
 const Society = require('./models/society');
-
+// changes done
 // Authentication Middleware (general)
 module.exports.isAuthenticated = async (req, res, next) => {
     try {
