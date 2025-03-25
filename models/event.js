@@ -4,7 +4,7 @@ const { Schema, model } = mongoose;
 const EventSchema = new Schema({
   societyId: { type: Schema.Types.ObjectId, ref: 'Society', required: true }, // Reference to Society
   title: { type: String, required: true },
-  date: { type: Date, required: true },
+  date: { type: Date, required: true, default: Date.now },
   time: { type: String, required: true }, // Format: "HH:MM AM/PM"
   location: { type: String, required: true },
   description: { type: String, required: true },
