@@ -1,5 +1,6 @@
 const Society = require("../models/society"); // Path to the Society model
 const Event =require("../models/event");
+const { google } = require("googleapis");
 module.exports.allevents = async (req, res) => {
     try {
         // Fetch all societies
@@ -16,6 +17,7 @@ module.exports.allevents = async (req, res) => {
             if (society.pastEvents.length) {
                 society.pastEvents.forEach(event => {
                     allData.push({
+                        id:event.eventId,
                         tag: 'event',
                         title: event.title,
                         description: event.description || '',
@@ -40,6 +42,7 @@ module.exports.allevents = async (req, res) => {
             if (society.recruitments.length) {
                 society.recruitments.forEach(recruitment => {
                     allData.push({
+                        id: recruitment.recruitmentId,
                         tag: 'recruitment',
                         title: recruitment.title,
                         logo: society.logo,
@@ -55,10 +58,10 @@ module.exports.allevents = async (req, res) => {
         // console.log(allData); // Optional: For debugging
 
         // Render the sorted data
-        res.json({
-            data:allData
-        })
-        // res.render("event/event.ejs", { allData });
+        // res.json({
+        //     data:allData
+        // })
+        res.render("event/event.ejs", { allData });
     } catch (error) {
         console.error(error);
         throw error;
@@ -87,3 +90,30 @@ module.exports.theevent = async(req,res)=>{
         })
     }
 };
+
+module.exports.createevent = async (req, res) => {
+    try {
+      const { title,dateofevent, time,description,location,category } = req.body;
+      const id=req.params.id;
+      const event = new Event({
+        societyId:id,
+        title:title,
+        date:dateofevent,
+        time:time,
+        location:location,
+        description:description,
+        category:category
+      });
+      const savedevent = await event.save();
+      
+      const society_event ={eventId:savedevent._id, title:title,date:date }
+      const updatedSociety = await Society.findByIdAndUpdate(
+        req.params.id,
+        { $push: { events: society_event } },
+        { new: true }
+      );
+      res.status(201).json({ message: "Society created successfully!",savedevent , updatedSociety });
+    } catch (error) {
+      return res.json({message:error.message});
+    }
+  };

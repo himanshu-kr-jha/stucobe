@@ -2,12 +2,13 @@ const mongoose = require('mongoose');
 const { Schema, model } = mongoose;
 
 const UserSchema = new Schema({
-  name: { type: String, required: true }, // Required during registration
-  email: { type: String, required: true, unique: true }, // Required during registration
-  password: { type: String, required: true }, // Required during registration
+  googleId: { type: String, unique: true, sparse: true }, // Google OAuth ID (sparse allows null values)
+  name: { type: String, required: false }, // Not required for Google users
+  email: { type: String, required: true, unique: true },
+  password: { type: String, required: false }, // Not required for Google users
   role: {
     type: String,
-    enum: ['societyAdmin', 'student'],
+    enum: ['societyAdmin', 'student','mainAdmin'],
     default: 'student'
   },
   profile: { // Optional fields

@@ -1,0 +1,44 @@
+{
+    "message": "This is the root page",
+    "req": {
+      "profile": {
+        "contact": "8181818181",
+        "department": "SE",
+        "year": "1",
+        "resumeUrl": "https://www.google.com",
+        "linkedinUrl": "https://www.linkedin.com",
+        "portfolioUrl": "https://www.portfolio.com"
+      },
+      "_id": "67e302baca6960d1871fee47",
+      "name": "HIMANSHU KUMAR JHA",
+      "email": "himanshukumarjha_se22a11_62@dtu.ac.in",
+      "password": "",
+      "role": "student",
+      "recruitmentApplications": [],
+      "createdAt": "2025-03-25T19:23:38.432Z",
+      "updatedAt": "2025-03-26T14:19:47.658Z",
+      "__v": 0
+    },
+    "session": {
+      "cookie": {
+        "originalMaxAge": 86400000,
+        "expires": "2025-04-03T12:54:29.179Z",
+        "secure": false,
+        "httpOnly": true,
+        "path": "/"
+      },
+      "passport": {
+        "user": {
+          "id": "67e302baca6960d1871fee47",
+          "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2N2UzMDJiYWNhNjk2MGQxODcxZmVlNDciLCJlbWFpbCI6ImhpbWFuc2h1a3VtYXJqaGFfc2UyMmExMV82MkBkdHUuYWMuaW4iLCJpYXQiOjE3NDM1OTg0NjksImV4cCI6MTc0MzY4NDg2OX0.h36_LPhkz9a0vH5jMgW8cD53cSLE3APCJOP-wyP3TaE"
+        }
+      },
+      "accessToken": "ya29.a0AeXRPp7xfkjf9421Tn5tEpAomSdlhXo313wvBrT4Koim19X7dnxU3a7cpaujGAbk1Aj3-tapi7pFwBXypZo77HREQETqOB94IRYy1fa9CUWJghFt7NlXaCfnZqaXKjPB9myyin-WOACYboujxednmYXzEw7GtFRlVXZ-F2ICaCgYKAb8SARMSFQHGX2Mi234LJT_W6_cR9nZ8DUlU2Q0175",
+      "societyadmin": {
+        "_id": "67e58d2ea94a8abc8c1fcad6",
+        "societyAdmin": "67e302baca6960d1871fee47",
+        "society": "67e58d2ea94a8abc8c1fcad4",
+        "__v": 0
+      }
+    }
+  }

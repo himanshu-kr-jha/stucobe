@@ -1,0 +1,20 @@
+<form action="/calendar/create-event-google" method="POST">
+    <input type="text" name="title" placeholder="Event Title" required>
+    <input type="date" name="date" required>
+    <input type="time" name="time" required>
+
+    <label>Recurrence:</label>
+    <select name="recurrence">
+        <option value="">None</option>
+        <option value="daily">Daily</option>
+        <option value="weekly">Weekly</option>
+        <option value="monthly">Monthly</option>
+    </select>
+
+    <label>Email Notification:</label>
+    <input type="checkbox" name="notifyEmail">
+    <label>Popup Notification:</label>
+    <input type="checkbox" name="notifyPopup">
+
+    <button type="submit">Add Event</button>
+</form>

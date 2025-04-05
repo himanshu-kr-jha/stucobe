@@ -35,7 +35,7 @@ const SocietySchema = new Schema({
       date: { type: Date }
     }
   ],
-  pastEvents: [
+  events: [
     {
       eventId: { type: Schema.Types.ObjectId, ref: 'Event' },
       title: { type: String },

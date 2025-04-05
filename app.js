@@ -10,12 +10,17 @@ const mongoose = require("mongoose");
 const path = require("path");
 
 const session = require("express-session");
-const MongoStore = require("connect-mongo"); // Store session in MongoDB
-const userRouter=require("./routes/user.routes")
-const societyRouter=require("./routes/society.routes");
-const eventRouter =require("./routes/events.routes");
-const methodOverride = require('method-override');
+const MongoStore = require("connect-mongo");
+const passport = require("passport");
 
+const userRouter = require("./routes/user.routes");
+const societyRouter = require("./routes/society.routes");
+const eventRouter = require("./routes/events.routes");
+const authRouter = require("./routes/auth.routes");
+
+require("./config/passport"); // Passport configuration file
+
+const methodOverride = require("method-override");
 
 app.engine("ejs", ejsMate);
 app.set("views", path.join(__dirname, "views"));
@@ -25,31 +30,33 @@ app.use(express.static(path.join(__dirname, "/public")));
 app.use(express.static(path.join(__dirname, "/public/js")));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-app.use(methodOverride('_method'));
-app.engine("ejs", ejsMate);
-
+app.use(methodOverride("_method"));
 
 // Session setup
 app.use(
   session({
-    secret: process.env.SESSION_SECRET, // Secure session secret
+    secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
     store: MongoStore.create({
-      mongoUrl: "mongodb://localhost:27017/stucobe", // MongoDB URL for session storage
+      mongoUrl: "mongodb://localhost:27017/stucobe",
     }),
     cookie: {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production", // Set to true in production with HTTPS
-      maxAge: 24 * 60 * 60 * 1000, // 1 day session expiration
+      secure: process.env.NODE_ENV === "production",
+      maxAge: 24 * 60 * 60 * 1000,
     },
   })
 );
 
+// Initialize Passport
+app.use(passport.initialize());
+app.use(passport.session());
+
 main().catch((err) => console.log(err));
 
 async function main() {
-  console.log("making connection");
+  console.log("Making connection to MongoDB...");
   try {
     await mongoose.connect("mongodb://localhost:27017/stucobe");
     console.log("Connected to local MongoDB successfully");
@@ -59,60 +66,45 @@ async function main() {
   }
 }
 
-// Register route
-// app.get("/register", (req, res) => {
-//   res.render("user/register.ejs");
-// });
-// app.use((req, res, next) => {
-//   console.log("Session data:", req.session);
-//   console.log("Token from session:", req.session?.token);
-//   next();
-// });
-
+// Middleware for setting user info in templates
 app.use((req, res, next) => {
-  res.locals.currUser = req.session.user;
+  res.locals.currUser = req.user || null;
   res.locals.Sadmin = req.session.societyadmin || null;
-  res.locals.mainAdmin=req.session.adminuser || null;
-  // console.log(res.locals.currUser)
+  res.locals.mainAdmin = req.session.mainAdmin || null;
+  console.log(res.locals);
   next();
 });
 
 const logUserDetails = (req, res, next) => {
-  const user = req.session.user || 'Guest'; // Assuming user details are stored in req.user (e.g., from authentication)
+  const user = req.user ? req.user.name : "Guest";
   const method = req.method;
   const url = req.originalUrl;
   const timestamp = new Date().toISOString();
 
   console.log(`[${timestamp}] ${method} request to ${url} by ${user}`);
-  
-  // Pass control to the next middleware or route handler
+
   next();
 };
 
-// Use the middleware globally (for all routes)
 app.use(logUserDetails);
 
-app.use("/user",userRouter);
-app.use("/society",societyRouter);
-app.use("/event",eventRouter);
+app.use("/user", userRouter);
+app.use("/society", societyRouter);
+app.use("/event", eventRouter);
+app.use("/auth", authRouter);
 
-app.use((req, res, next) => {
-  const originalSend = res.send;
-  console.log("used---------")
-  res.send = function (body) {
-      if (body instanceof Error) {
-          // Render the error page instead of sending raw error text
-          return res.status(body.status || 500).render('error/error.ejs', { message: body.message });
-      }
-      return originalSend.apply(this, arguments);
-  };
-  next();
-});
+const calendarRouter = require("./routes/calendar.routes");
+app.use("/calendar",calendarRouter);
+
 
 app.get("/", (req, res) => {
-  res.json({message:"This is root page"});
   // res.render("home/home.ejs");
+  res.json({ message: "This is the root page",
+    req:req.user,
+  session:req.session });
 });
+
+
 
 app.listen(port, () => {
   console.log(`Server started at http://localhost:${port}`);

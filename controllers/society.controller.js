@@ -2,7 +2,10 @@ const Society = require("../models/society.js");
 const SocietyAdmin = require("../models/societyAdmin.js");
 const User = require("../models/user"); // Path to your User model
 const RecruitmentSchema = require("../models/recruitment");
-
+const jwt = require('jsonwebtoken');
+module.exports.createSocietyform = async(req,res)=>{
+    res.render("society/createsociety.ejs");
+}
 module.exports.createSociety = async (req, res) => {
   const { name, description, societyAdminEmail, logourl } = req.body;
 
@@ -11,7 +14,7 @@ module.exports.createSociety = async (req, res) => {
   }
 
   try {
-    const mainAdmin = req.session.user;
+    const mainAdmin = req.user;
     console.log(mainAdmin);
 
     const societyAdmin = await User.findOne({ email: societyAdminEmail });
@@ -22,8 +25,8 @@ module.exports.createSociety = async (req, res) => {
     const newSociety = new Society({
       name,                                                                                   
       description,
-      mainAdmin: mainAdmin._id, // Single ObjectId for the main admin
-      societyAdmin: [societyAdmin._id],
+      mainAdmin: mainAdmin.id, // Single ObjectId for the main admin
+      societyAdmin: [societyAdmin.id],
       logo: logourl
     });
 
@@ -38,7 +41,7 @@ module.exports.createSociety = async (req, res) => {
     // console.log("saved admin----", savedAdmin)
     res.status(201).json({ message: "Society created successfully!", societyId: newSociety._id });
   } catch (err) {
-    console.log(err);
+    console.log("==========",err);
     const mainAdmin = req.user;
     res.status(500).json({ 
       error: "Error creating society." ,
@@ -151,10 +154,10 @@ module.exports.updateOraddAdmin = async (req, res) => {
 module.exports.removeAdmin = async (req, res) => {
   try {
     const { adminId } = req.params;
-    if (req.session.user._id === adminId) {
+    if (req.session.societyadmin.societyAdmin === adminId) {
       res.status(500).json({ error: "cannot delete yourself" });
     }
-    if (req.session.user._id != adminId) {
+    if (req.session.societyadmin.societyAdmin != adminId) {
       const updatedSociety = await Society.findByIdAndUpdate(
         req.params.id,
         { $pull: { societyAdmin: adminId } },
@@ -171,6 +174,7 @@ module.exports.removeAdmin = async (req, res) => {
     }
 
   } catch (error) {
+    console.log(error);
     res.status(500).json({ error: error.message });
   }
 };
@@ -336,7 +340,8 @@ module.exports.addRecruitment = async (req, res) => {
   try {
     const { title, description, eligibility, deadline } = req.body;
     const societyId = req.params.id;
-
+    const token = req.session?.passport?.user?.token; // Retrieve token from session
+    const decoded = jwt.verify(token, process.env.JWT_TOKEN);
     // Create and save the recruitment
     const recruitment = new RecruitmentSchema({
       societyId: societyId,
@@ -344,7 +349,7 @@ module.exports.addRecruitment = async (req, res) => {
       description: description,
       eligibility: eligibility,
       deadline: deadline,
-      createdBy: req.session.user._id,
+      createdBy: decoded._id,
     });
     const savedRecruitment = await recruitment.save();
     

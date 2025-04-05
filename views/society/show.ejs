@@ -612,11 +612,10 @@
                     <p>
                         <%= society.description %>
                     </p>
-
-                    <% if (Sadmin!=null && Sadmin.society==society._id) { %>
-                        <button class="edit-button submit-button"
-                            onclick="openModal('modalSocietyHeader')">Edit</button>
-                        <% } %>
+                    <% if (Array.isArray(Sadmin) && Sadmin.some(admin => admin.society == society._id)) { %>
+                        <button class="edit-button submit-button" onclick="openModal('modalSocietyHeader')">Edit</button>
+                    <% } %>
+                    
                 </div>
             </div>
             <br><br><br>
@@ -633,7 +632,7 @@
                 <p><strong>Phone no</strong>
                     <%= society.facultyAdvisor?.phone || '' %>
                 </p>
-                <% if (Sadmin!=null && Sadmin.society==society._id) { %>
+                <% if (Array.isArray(Sadmin) && Sadmin.some(admin => admin.society == society._id)) { %>
                     <button class="edit-button submit-button" onclick="openModal('modalFacultyAdvisor')">Edit</button>
                     <% } %>
             </div>
@@ -650,7 +649,7 @@
                         <p><strong>Email</strong>
                             <%= user.email || '' %>
                         </p>
-                        <% if (Sadmin !=null && Sadmin.societyAdmin !=user._id && Sadmin.society==society._id ) { %>
+                        <% if (Sadmin !=null && Sadmin.some(admin => admin.society == society._id)&& !Sadmin.some(admin => admin.societyAdmin == user._id)) { %>
                             <form action="/society/<%= society._id %>/society-admin/<%= user._id %>?_method=DELETE"
                                 method="POST">
                                 <button class="delete-btn submit-button">
@@ -661,7 +660,7 @@
                     </div>
 
                     <% }); %>
-                        <% if (Sadmin !=null && Sadmin.society==society._id) { %>
+                        <% if (Sadmin !=null && Sadmin.some(admin => admin.society == society._id)|| mainAdmin) { %>
                             <button class="edit-button" onclick="openModal('modalSocietyAdmins')">Add</button>
                             <% } %>
             </div>
@@ -679,7 +678,7 @@
                             <%= new Date(announcement?.date || '' ).toLocaleDateString() %>
                         </p>
 
-                        <% if (Sadmin !=null && Sadmin.society==society._id) { %>
+                        <% if (Sadmin !=null && Sadmin.some(admin => admin.society == society._id)) { %>
                             <button class="btn edit-btn"
                                 onclick="openModal('modaleditAnnouncement<%= announcement._id %>')"><i
                                     class="fas fa-edit"></i></button>
@@ -715,7 +714,7 @@
                     </div>
                     <% }); %>
 
-                        <% if (Sadmin !=null && Sadmin.society==society._id) { %>
+                        <% if (Sadmin !=null && Sadmin.some(admin => admin.society == society._id)) { %>
                             <button class="edit-button" onclick="openModal('modalAnnouncements')">Add</button>
                             <% } %>
             </div>
@@ -730,7 +729,7 @@
                         <p><strong>Deadline:</strong>
                             <%= new Date(recruitment?.deadline || '' ).toLocaleDateString() %>
                         </p>
-                        <% if (Sadmin !=null && Sadmin.society==society._id) { %>
+                        <% if (Sadmin !=null && Sadmin.some(admin => admin.society == society._id)) { %>
                             <button class=" btn edit-btn"
                                 onclick="openModal('modaleditrecruitment<%= recruitment.recruitmentId._id %>')"><i
                                     class="fas fa-edit"></i></button>
@@ -784,7 +783,7 @@
                             <% } %>
                     </div>
                     <% }); %>
-                        <% if (Sadmin!=null && Sadmin.society==society._id) { %>
+                        <% if (Array.isArray(Sadmin) && Sadmin.some(admin => admin.society == society._id)) { %>
                             <button class="edit-button" onclick="openModal('modalRecruitments')">Add</button>
                             <% } %>
             </div>
@@ -803,7 +802,7 @@
                             <%= achievement?.date ? new Date(achievement.date).toLocaleDateString() : 'N/A' %>
                         </p>
 
-                        <% if (Sadmin !=null && Sadmin.society==society._id) { %>
+                        <% if (Sadmin !=null && Sadmin.some(admin => admin.society == society._id)) { %>
                             <!-- Unique modal ID -->
                             <button class="btn edit-btn"
                                 onclick="openModal('modaleditAchievements<%= achievement._id %>')"><i
@@ -833,7 +832,7 @@
                     </div>
                     <% } %>
                         <% }); %>
-                            <% if (Sadmin !=null && Sadmin.society==society._id) { %>
+                            <% if (Sadmin !=null && Sadmin.some(admin => admin.society == society._id)) { %>
                                 <button class="edit-button" onclick="openModal('modalAchievements')">Add</button>
                                 <% } %>
             </div>

@@ -27,7 +27,7 @@ module.exports.register = async (req, res) => {
       const user = new User({ name, email, password: hashedPassword });
       await user.save();
   
-      res.status(201).json({ message: "User registered successfully", userId: user._id });
+      res.status(201).json({ message: "User registered successfully", userId: user.id });
     } catch (err) {
       res.status(400).json({ error: err.message });
     }
@@ -53,7 +53,7 @@ module.exports.register = async (req, res) => {
       }
   
       // Check if the user is a society admin
-      const societyAdmin = await SocietyAdmin.findOne({ societyAdmin: user._id });
+      const societyAdmin = await SocietyAdmin.findOne({ societyAdmin: user.id });
       if (societyAdmin) {
         req.session.societyadmin = societyAdmin;
       }
@@ -65,14 +65,14 @@ module.exports.register = async (req, res) => {
   
       // Store minimal user data in the session
       req.session.user = {
-        _id: user._id,
+        id: user.id,
         email: user.email,
         role: user.role // if you have a role field
       };
   
       // Generate a JWT token (optional, if needed for stateless authentication)
       const token = jwt.sign(
-        { _id: user._id },
+        { id: user.id },
         process.env.JWT_SECRET_TOKEN,
         { expiresIn: "1h" }
       );
@@ -82,7 +82,7 @@ module.exports.register = async (req, res) => {
       res.json({
         message: "Logged in successfully",
         user: {
-          _id: user._id,
+          id: user.id,
           email: user.email,
           role: user.role // if you have a role field
         },
@@ -105,13 +105,15 @@ module.exports.register = async (req, res) => {
   };
 
   module.exports.profile = async (req, res) => {
-    const user = await User.findById(req.session.user._id);
+    const id= req.session?.passport?.user?.id
+    const user = await User.findById(id);
     res.json(user);
     // res.render("user/profile.ejs",{user});
   };
 
   module.exports.updateProfile = async (req, res) => {
-    const id = req.session.user._id;
+    const token = req.session.passport.user.token;
+    const decoded = jwt.verify(token,process.env.JWT_TOKEN);
     const { contact, department, year, resumeUrl, linkedinUrl, portfolioUrl } = req.body;
   
     try {
@@ -123,7 +125,7 @@ module.exports.register = async (req, res) => {
   
       // Find the user and update the profile
       const updatedUser = await User.findByIdAndUpdate(
-        id,
+        decoded._id,
         { profile: filteredUpdates },
         { new: true, runValidators: true } // Return updated user and validate input
       );
@@ -132,8 +134,8 @@ module.exports.register = async (req, res) => {
         return res.status(404).json({ error: 'User not found' });
       }
   
-      // res.status(200).json({ message: 'Profile updated successfully', user: updatedUser });
-      res.redirect("/user/profile");
+      res.status(200).json({ message: 'Profile updated successfully', user: updatedUser });
+      // res.redirect("/user/profile");
     } catch (error) {
       console.error(error);
       res.status(500).json({ error: 'An error occurred while updating the profile' });
@@ -142,7 +144,7 @@ module.exports.register = async (req, res) => {
 
   module.exports.userSocietyFollow = async (req, res) => {
     try {
-      const userid = req.session.user._id; // Current user ID
+      const userid = req.session.user.id; // Current user ID
       const societyId = req.params.id; // Society ID
   
       // Check if the user is already a follower
@@ -166,7 +168,7 @@ module.exports.register = async (req, res) => {
   };
 
   module.exports.userEvents = async(req,res)=>{
-    const userid = req.session.user._id;
+    const userid = req.session.user.id;
     try
     {
         const calendarEvents = await calendarEvent.find({userId:userid});
